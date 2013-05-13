@@ -69,7 +69,7 @@
     } else {
       //use steps from data-* annotations
 
-      var allIntroSteps = targetElm.querySelectorAll('*[data-intro]');
+      var allIntroSteps = targetElm.querySelectorAll('*[data-intro-text]');
       //if there's no element to intro
       if (allIntroSteps.length < 1) {
         return false;
@@ -79,9 +79,9 @@
         var currentElement = allIntroSteps[i];
         introItems.push({
           element: currentElement,
-          intro: currentElement.getAttribute('data-intro'),
-          step: parseInt(currentElement.getAttribute('data-step'), 10),
-          position: currentElement.getAttribute('data-position') || this._options.tooltipPosition
+          intro: currentElement.getAttribute('data-intro-text'),
+          step: parseInt(currentElement.getAttribute('data-intro-step'), 10),
+          position: currentElement.getAttribute('data-intro-position') || this._options.tooltipPosition
         });
       }
     }
