@@ -4,6 +4,7 @@
 
 
 ## How to use
+
 Intro.js can be added to your site in three simple steps:
 
 **1)** Include `intro.js` and `introjs.css` (or the minified version for production) in your page. 
@@ -29,6 +30,7 @@ Optionally, pass one parameter to `introJs` function to limit the presentation s
 
 <p align="center"><img src="http://usablica.github.com/intro.js/img/introjs-demo.png"></p>  
 
+
 ## API
 
 ###introJs([targetElm])
@@ -52,6 +54,7 @@ introJs("#intro-farm") //start introduction for element id='intro-farm'
 
 -----
 
+
 ###introJs.start()
 
 Start the introduction for defined element(s).
@@ -66,6 +69,7 @@ Start the introduction for defined element(s).
 introJs().start()
 ````
 -----
+
 
 ###introJs.goToStep(step)
 
@@ -86,6 +90,7 @@ introJs().goToStep(2).start(); //starts introduction from step 2
 
 -----
 
+
 ###introJs.exit()
 
 Exit the introduction.
@@ -101,6 +106,7 @@ introJs().exit()
 ````
 
 -----
+
 
 ###introJs.setOption(option, value)
 
@@ -125,6 +131,7 @@ introJs().setOption("skipLabel", "Exit");
 
 ----
 
+
 ###introJs.setOptions(options)
 
 Set a group of options to the introJs object.
@@ -144,6 +151,7 @@ introJs().setOptions({ skipLabel: "Exit", tooltipPosition: "right" });
 ````
 
 ----
+
 
 ###introJs.oncomplete(providedCallback)
 
@@ -166,6 +174,7 @@ introJs().oncomplete(function() {
 
 -----
 
+
 ###introJs.onexit(providedCallback)
 
 Set callback to exit of introduction. Exit also means pressing `ESC` key and clicking on the overlay layer by the user.  
@@ -186,6 +195,7 @@ introJs().onexit(function() {
 ````
 
 -----
+
 
 ###introJs.onchange(providedCallback)
 
@@ -209,6 +219,7 @@ introJs().onchange(function(targetElement) {
 
 -----
 
+
 ###introJs.onbeforechange(providedCallback)
 
 Given callback function will be called before starting a new step of introduction. The callback function receives the element of the new step as an argument.
@@ -230,6 +241,7 @@ introJs().onbeforechange(function(targetElement) {
 
 -----
 
+
 ###Options:
 
  - `steps`: For defining steps using JSON configuration (see [this](https://github.com/usablica/intro.js/blob/master/example/programmatic/index.html) example)
@@ -244,12 +256,16 @@ introJs().onbeforechange(function(targetElement) {
 
 See [setOption](https://github.com/usablica/intro.js/edit/master/README.md#introjssetoptionoption-value) to see an example.
 
+
 ## Using with:
 
 ### Rails
+
 If you are using the rails asset pipeline you can use the [introjs-rails](https://github.com/heelhook/intro.js-rails) gem.
 
+
 ### Yii framework
+
 You can simply use this project for Yii framework: https://github.com/moein7tl/Yii-IntroJS
 
 
@@ -263,6 +279,7 @@ Now you can run this command to minify all static resources:
 
 
 ## Roadmap
+
 - More browser compatibility
 - Provide more examples
 
@@ -311,6 +328,7 @@ Now you can run this command to minify all static resources:
    - First commit. 
 
 ## Author
+
 **Afshin Mehrabani**
 
 - [Twitter](https://twitter.com/afshinmeh)
@@ -321,10 +339,12 @@ Now you can run this command to minify all static resources:
 
 
 ## Support/Discussion
+
 - [Google Group](https://groups.google.com/d/forum/introjs)
 - [Stackoverflow](http://stackoverflow.com/questions/tagged/intro.js)
 
 ## License
+
 > Copyright (C) 2012 Afshin Mehrabani (afshin.meh@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
