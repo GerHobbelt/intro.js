@@ -1,5 +1,5 @@
 /**
- * Intro.js v0.4.0
+ * Intro.js v0.5.0
  * https://github.com/usablica/intro.js
  * MIT licensed
  *
@@ -19,7 +19,7 @@
   }
 } (this, function (exports) {
   //Default config/variables
-  var VERSION = '0.4.0';
+  var VERSION = '0.5.0';
 
   /**
    * IntroJs main class
@@ -30,13 +30,23 @@
     this._targetElement = obj;
 
     this._options = {
+      /* Next button label in tooltip box */
       nextLabel: 'Next &rarr;',
+      /* Previous button label in tooltip box */
       prevLabel: '&larr; Back',
+      /* Skip button label in tooltip box */
       skipLabel: 'Skip',
+      /* Done button label in tooltip box */
       doneLabel: 'Done',
+      /* Default tooltip box position */
       tooltipPosition: 'bottom',
+      /* Next CSS class for tooltip boxes */
+      tooltipClass: '',
+      /* Close introduction when pressing Escape button? */
       exitOnEsc: true,
+      /* Close introduction when clicking on overlay layer? */
       exitOnOverlayClick: true,
+      /* Show step numbers in introduction? */
       showStepNumbers: true
     };
   }
@@ -61,8 +71,11 @@
         var currentItem = this._options.steps[i];
         //set the step
         currentItem.step = i + 1;
-        //grab the element with given selector from the page
-        currentItem.element = document.querySelector(currentItem.element);
+        //use querySelector function only when developer used CSS selector
+        if (typeof(currentItem.element) === 'string') {
+          //grab the element with given selector from the page
+          currentItem.element = document.querySelector(currentItem.element);
+        }
         introItems.push(currentItem);
       }
 
@@ -81,6 +94,7 @@
           element: currentElement,
           intro: currentElement.getAttribute('data-intro'),
           step: parseInt(currentElement.getAttribute('data-step'), 10),
+	  tooltipClass: currentElement.getAttribute('data-tooltipClass'),
           position: currentElement.getAttribute('data-position') || this._options.tooltipPosition
         });
       }
@@ -163,10 +177,6 @@
    * @method _nextStep
    */
   function _nextStep() {
-    if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
-      this._introBeforeChangeCallback.call(this, this._targetElement.element);
-    }
-
     if (typeof (this._currentStep) === 'undefined') {
       this._currentStep = 0;
     } else {
@@ -183,7 +193,12 @@
       return;
     }
 
-    _showElement.call(this, this._introItems[this._currentStep]);
+    var nextStep = this._introItems[this._currentStep];
+    if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
+      this._introBeforeChangeCallback.call(this, nextStep.element);
+    }
+
+    _showElement.call(this, nextStep);
   }
 
   /**
@@ -197,11 +212,12 @@
       return false;
     }
 
+    var nextStep = this._introItems[--this._currentStep];
     if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
-      this._introBeforeChangeCallback.call(this, this._targetElement.element);
+      this._introBeforeChangeCallback.call(this, nextStep.element);
     }
 
-    _showElement.call(this, this._introItems[--this._currentStep]);
+    _showElement.call(this, nextStep);
   }
 
   /**
@@ -268,6 +284,21 @@
     //prevent error when `this._currentStep` is undefined
     if(!this._introItems[this._currentStep]) return;
 
+    var tooltipCssClass = '';
+
+    //if we have a custom css class for each step
+    var currentStepObj = this._introItems[this._currentStep];
+    if (typeof (currentStepObj.tooltipClass) === 'string') {
+      tooltipCssClass = currentStepObj.tooltipClass;
+    } else {
+      tooltipCssClass = this._options.tooltipClass;
+    }
+
+    tooltipLayer.className = ('introjs-tooltip ' + tooltipCssClass).replace(/^\s+|\s+$/g, '');
+
+    //custom css class for tooltip boxes
+    var tooltipCssClass = this._options.tooltipClass;
+
     var currentTooltipPosition = this._introItems[this._currentStep].position;
     switch (currentTooltipPosition) {
       case 'top':
@@ -326,7 +357,7 @@
     if (typeof (this._introChangeCallback) !== 'undefined') {
         this._introChangeCallback.call(this, targetElement.element);
     }
-    
+
     var self = this,
         oldHelperLayer = document.querySelector('.introjs-helperLayer'),
         elementPosition = _getOffset(targetElement.element);
@@ -388,9 +419,7 @@
       this._targetElement.appendChild(helperLayer);
 
       arrowLayer.className = 'introjs-arrow';
-      tooltipLayer.className = 'introjs-tooltip';
 
-      
       tooltipLayer.innerHTML = '<div class="introjs-tooltiptext">' +
                                targetElement.intro +
                                '</div><div class="introjs-tooltipbuttons"></div>';
@@ -449,8 +478,12 @@
 
       var tooltipButtonsLayer = tooltipLayer.querySelector('.introjs-tooltipbuttons');
       tooltipButtonsLayer.appendChild(skipTooltipButton);
-      tooltipButtonsLayer.appendChild(prevTooltipButton);
-      tooltipButtonsLayer.appendChild(nextTooltipButton);
+
+      //in order to prevent displaying next/previous button always
+      if (this._introItems.length > 1) {
+        tooltipButtonsLayer.appendChild(prevTooltipButton);
+        tooltipButtonsLayer.appendChild(nextTooltipButton);
+      }
 
       //set proper position
       _placeTooltip.call(self, targetElement.element, tooltipLayer, arrowLayer);
