@@ -1,1 +1,10 @@
+# Editor backup files
+*~
+*.bak
+
+# MSOffice temporary files
+~*
+
+# NPM/NodeJS stuff
 node_modules
+
