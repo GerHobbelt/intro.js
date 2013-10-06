@@ -1,6 +1,6 @@
 /**
- * Intro.js v0.5.0
- * https://github.com/usablica/intro.js
+ * Intro.js v0.5.1
+ * https://github.com/jasuca/intro.js
  * MIT licensed
  *
  * Copyright (C) 2013 usabli.ca - A weekend project by Afshin Mehrabani (@afshinmeh)
@@ -19,7 +19,7 @@
   }
 } (this, function (exports) {
   //Default config/variables
-  var VERSION = '0.5.0';
+  var VERSION = '0.5.1';
 
   /**
    * IntroJs main class
@@ -48,8 +48,8 @@
       exitOnOverlayClick: true,
       /* Show step numbers in introduction? */
       showStepNumbers: true,
-      /* Let user use keyboard to navigate the tour? */
-      keyboardNavigation: true
+      /* Scroll container */
+      scrollContainer: 'body'
     };
   }
 
@@ -71,6 +71,17 @@
 
       for (var i = 0, stepsLength = this._options.steps.length; i < stepsLength; i++) {
         var currentItem = this._options.steps[i];
+
+        // ignore this element
+        if (currentItem.hide_on_width > window.innerWidth) {
+          console.debug('Remove this element [hide_on_width]:', currentItem.element);
+          continue;
+        }
+        if (currentItem.show_on_width < window.innerWidth) {
+          console.debug('Remove this element [show_on_width]:', currentItem.element);
+          continue;
+        }
+
         //set the step
         currentItem.step = i + 1;
         //use querySelector function only when developer used CSS selector
@@ -78,6 +89,7 @@
           //grab the element with given selector from the page
           currentItem.element = document.querySelector(currentItem.element);
         }
+
         introItems.push(currentItem);
       }
 
@@ -92,6 +104,7 @@
 
       for (var i = 0, elmsLength = allIntroSteps.length; i < elmsLength; i++) {
         var currentElement = allIntroSteps[i];
+
         introItems.push({
           element: currentElement,
           intro: currentElement.getAttribute('data-intro'),
@@ -133,7 +146,7 @@
           //right arrow or enter
           _nextStep.call(self);
           //prevent default behaviour on hitting Enter, to prevent steps being skipped in some browsers
-          if(e.preventDefault) {
+          if(e.preventDefault) { 
             e.preventDefault();
           } else {
             e.returnValue = false;
@@ -146,15 +159,11 @@
       };
 
       if (window.addEventListener) {
-        if(this._options.keyboardNavigation) {
-          window.addEventListener('keydown', self._onKeyDown, true);
-        }
+        window.addEventListener('keydown', self._onKeyDown, true);
         //for window resize
         window.addEventListener("resize", self._onResize, true);
       } else if (document.attachEvent) { //IE
-        if(this._options.keyboardNavigation) {
-          document.attachEvent('onkeydown', self._onKeyDown);
-        }
+        document.attachEvent('onkeydown', self._onKeyDown);
         //for window resize
         document.attachEvent("onresize", self._onResize);
       }
@@ -303,9 +312,10 @@
     tooltipLayer.className = ('introjs-tooltip ' + tooltipCssClass).replace(/^\s+|\s+$/g, '');
 
     //custom css class for tooltip boxes
-    var tooltipCssClass = this._options.tooltipClass;
+    tooltipCssClass = this._options.tooltipClass;
 
     var currentTooltipPosition = this._introItems[this._currentStep].position;
+
     switch (currentTooltipPosition) {
       case 'top':
         tooltipLayer.style.left = '15px';
@@ -320,6 +330,16 @@
         tooltipLayer.style.top = '15px';
         tooltipLayer.style.right = (_getOffset(targetElement).width + 20) + 'px';
         arrowLayer.className = 'introjs-arrow right';
+        break;
+      case 'left-top':
+        tooltipLayer.style.right = (_getOffset(targetElement).width + 20) + 'px';
+        tooltipLayer.style.top = '-' + (_getOffset(tooltipLayer).height - 10) + 'px';
+        arrowLayer.className = 'introjs-arrow right-bottom';
+        break;
+      case 'right-bottom':
+        tooltipLayer.style.left = (_getOffset(targetElement).width + 20) + 'px';
+        tooltipLayer.style.bottom = '-' + (_getOffset(tooltipLayer).height - 10) + 'px';
+        arrowLayer.className = 'introjs-arrow left';
         break;
       case 'bottom':
       // Bottom going to follow the default behavior
@@ -362,6 +382,26 @@
 
     if (typeof (this._introChangeCallback) !== 'undefined') {
         this._introChangeCallback.call(this, targetElement.element);
+    }
+
+    // Scroll to the element - done before
+    if (!_elementInViewport(targetElement.element)) {
+      var rect = targetElement.element.getBoundingClientRect(),
+          top = rect.bottom - (rect.bottom - rect.top),
+          bottom = rect.bottom - _getWinSize().height;
+
+      // Scroll up
+      // $('.frame .view').scrollTop($('#help').offset().top)
+      // console.log(this._options.scrollContainer, top, bottom)
+      if (top < 0) {
+        console.debug("scroll top by (-30)", top);
+        $(this._options.scrollContainer).scrollTop(top - 30); // 30px padding from edge to look nice
+
+      // Scroll down
+      } else {
+        console.debug("scroll top by (+100)", bottom);
+        $(this._options.scrollContainer).scrollTop(bottom + 100); // 70px + 30px padding from edge to look nice
+      }
     }
 
     var self = this,
@@ -532,21 +572,6 @@
       }
       parentElm = parentElm.parentNode;
     }
-
-    if (!_elementInViewport(targetElement.element)) {
-      var rect = targetElement.element.getBoundingClientRect(),
-          top = rect.bottom - (rect.bottom - rect.top),
-          bottom = rect.bottom - _getWinSize().height;
-
-      // Scroll up
-      if (top < 0) {
-        window.scrollBy(0, top - 30); // 30px padding from edge to look nice
-
-      // Scroll down
-      } else {
-        window.scrollBy(0, bottom + 100); // 70px + 30px padding from edge to look nice
-      }
-    }
   }
 
   /**
@@ -607,7 +632,7 @@
       rect.top >= 0 &&
       rect.left >= 0 &&
       (rect.bottom+80) <= window.innerHeight && // add 80 to get the text right
-      rect.right <= window.innerWidth
+      rect.right <= window.innerWidth 
     );
   }
 
@@ -677,18 +702,23 @@
     elementPosition.height = element.offsetHeight;
 
     //calculate element top and left
-    var _x = 0;
-    var _y = 0;
-    while(element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
-      _x += element.offsetLeft;
-      _y += element.offsetTop;
-      element = element.offsetParent;
-    }
+    // var _x = 0;
+    // var _y = 0;
+    // while(element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
+    //   _x += element.offsetLeft;
+    //   _y += element.offsetTop;
+    //   element = element.offsetParent;
+    // }
+    // Use jQuery offset
+    var _jquery_offset = $(element).offset();
+    var _y = _jquery_offset.top;
+    var _x = _jquery_offset.left;
+
+
     //set top
     elementPosition.top = _y;
     //set left
     elementPosition.left = _x;
-
     return elementPosition;
   }
 
