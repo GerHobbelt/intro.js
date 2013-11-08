@@ -47,7 +47,9 @@
       /* Close introduction when clicking on overlay layer? */
       exitOnOverlayClick: true,
       /* Show step numbers in introduction? */
-      showStepNumbers: true
+      showStepNumbers: true,
+      /* Let user use keyboard to navigate the tour? */
+      keyboardNavigation: true
     };
   }
 
@@ -80,25 +82,58 @@
       }
 
     } else {
-      //use steps from data-* annotations
-
+      //use steps from data-intro-* annotations
       var allIntroSteps = targetElm.querySelectorAll('*[data-intro-text]');
       //if there's no element to intro
       if (allIntroSteps.length < 1) {
         return false;
       }
 
+      //first add intro items with data-step
       for (var i = 0, elmsLength = allIntroSteps.length; i < elmsLength; i++) {
         var currentElement = allIntroSteps[i];
-        introItems.push({
-          element: currentElement,
-          intro: currentElement.getAttribute('data-intro-text'),
-          step: parseInt(currentElement.getAttribute('data-intro-step'), 10),
-	      tooltipClass: currentElement.getAttribute('data-intro-tooltipClass'),
-          position: currentElement.getAttribute('data-intro-position') || this._options.tooltipPosition
-        });
+        var step = parseInt(currentElement.getAttribute('data-intro-step'), 10);
+
+        if (step > 0) {
+          introItems[step - 1] = {
+            element: currentElement,
+            intro: currentElement.getAttribute('data-intro-text'),
+            step: parseInt(currentElement.getAttribute('data-intro-step'), 10),
+	        tooltipClass: currentElement.getAttribute('data-intro-tooltipClass'),
+            position: currentElement.getAttribute('data-intro-position') || this._options.tooltipPosition
+          };
+        }
+      }
+
+      //next add intro items without data-step
+      //todo: we need a cleanup here, two loops are redundant
+      var nextStep = 0;
+      for (var i = 0, elmsLength = allIntroSteps.length; i < elmsLength; i++) {
+        var currentElement = allIntroSteps[i];
+
+        if (currentElement.getAttribute('data-intro-step') == null) {
+         
+          while(true) {
+            if (typeof introItems[nextStep] == 'undefined') {
+              break;
+            } else {
+              nextStep++;
+            }
+          }
+
+          introItems.push({
+            element: currentElement,
+            intro: currentElement.getAttribute('data-intro-text'),
+            step: nextStep + 1,
+            tooltipClass: currentElement.getAttribute('data-intro-tooltipClass'),
+            position: currentElement.getAttribute('data-intro-position') || this._options.tooltipPosition
+          });
+        }
       }
     }
+
+    //removing undefined/null elements
+    introItems = introItems.filter(function(n){ return n; });
 
     //Ok, sort all items with given steps
     introItems.sort(function (a, b) {
@@ -109,7 +144,7 @@
     self._introItems = introItems;
 
     //add overlay layer to the page
-    if(_addOverlayLayer.call(self, targetElm)) {
+    if (_addOverlayLayer.call(self, targetElm)) {
       //then, start the show
       _nextStep.call(self);
 
@@ -124,14 +159,14 @@
           if (self._introExitCallback != undefined) {
             self._introExitCallback.call(self);
           }
-        } else if(e.keyCode === 37) {
+        } else if (e.keyCode === 37) {
           //left arrow
           _previousStep.call(self);
         } else if (e.keyCode === 39 || e.keyCode === 13) {
           //right arrow or enter
           _nextStep.call(self);
           //prevent default behaviour on hitting Enter, to prevent steps being skipped in some browsers
-          if(e.preventDefault) { 
+          if (e.preventDefault) {
             e.preventDefault();
           } else {
             e.returnValue = false;
@@ -144,11 +179,15 @@
       };
 
       if (window.addEventListener) {
-        window.addEventListener('keydown', self._onKeyDown, true);
+        if (this._options.keyboardNavigation) {
+          window.addEventListener('keydown', self._onKeyDown, true);
+        }
         //for window resize
         window.addEventListener("resize", self._onResize, true);
       } else if (document.attachEvent) { //IE
-        document.attachEvent('onkeydown', self._onKeyDown);
+        if (this._options.keyboardNavigation) {
+          document.attachEvent('onkeydown', self._onKeyDown);
+        }
         //for window resize
         document.attachEvent("onresize", self._onResize);
       }
@@ -529,14 +568,15 @@
 
     if (!_elementInViewport(targetElement.element)) {
       var rect = targetElement.element.getBoundingClientRect(),
-          top = rect.bottom - (rect.bottom - rect.top),
-          bottom = rect.bottom - _getWinSize().height;
+        winHeight = _getWinSize().height,
+        top = rect.bottom - (rect.bottom - rect.top),
+        bottom = rect.bottom - winHeight;
 
-      // Scroll up
-      if (top < 0) {
+      //Scroll up
+      if (top < 0 || targetElement.element.clientHeight > winHeight) {
         window.scrollBy(0, top - 30); // 30px padding from edge to look nice
 
-      // Scroll down
+      //Scroll down
       } else {
         window.scrollBy(0, bottom + 100); // 70px + 30px padding from edge to look nice
       }
@@ -562,7 +602,7 @@
     }
 
     //Prevent exception in IE
-    if(propValue && propValue.toLowerCase) {
+    if (propValue && propValue.toLowerCase) {
       return propValue.toLowerCase();
     } else {
       return propValue;
@@ -600,8 +640,8 @@
     return (
       rect.top >= 0 &&
       rect.left >= 0 &&
-      (rect.bottom+80) <= window.innerHeight && // add 80 to get the text right
-      rect.right <= window.innerWidth 
+      (rect.bottom + 80) <= window.innerHeight && // add 80 to get the text right
+      rect.right <= window.innerWidth
     );
   }
 
@@ -636,7 +676,7 @@
     targetElm.appendChild(overlayLayer);
 
     overlayLayer.onclick = function() {
-      if(self._options.exitOnOverlayClick == true) {
+      if (self._options.exitOnOverlayClick == true) {
         _exitIntro.call(self, targetElm);
       }
       //check if any callback is defined
