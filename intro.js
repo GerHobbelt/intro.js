@@ -103,7 +103,7 @@
             element: currentElement,
             intro: currentElement.getAttribute('data-intro-text'),
             step: parseInt(currentElement.getAttribute('data-intro-step'), 10),
-	        tooltipClass: currentElement.getAttribute('data-intro-tooltipClass'),
+	          tooltipClass: currentElement.getAttribute('data-intro-tooltipClass'),
             position: currentElement.getAttribute('data-intro-position') || this._options.tooltipPosition
           };
         }
