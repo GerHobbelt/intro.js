@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Stop the introduction at any step and continue later</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Intro.js - Better introductions for websites and features with a step-by-step guide for your projects.">
+    <meta name="author" content="Afshin Mehrabani (@afshinmeh) in usabli.ca group">
+
+    <!-- styles -->
+    <link href="../assets/css/bootstrap.css" rel="stylesheet">
+    <link href="../assets/css/demo.css" rel="stylesheet">
+
+    <!-- Add IntroJs styles -->
+    <link href="../../introjs.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div class="container-narrow">
+
+      <div class="masthead">
+        <ul id="step5" class="nav nav-pills pull-right">
+          <li><a href="https://github.com/usablica/intro.js/tags"><i class='icon-black icon-download-alt'></i> Download</a></li>
+          <li><a href="https://github.com/usablica/intro.js">Github</a></li>
+          <li><a href="https://twitter.com/usablica">@usablica</a></li>
+        </ul>
+        <h3 class="muted">Intro.js</h3>
+      </div>
+
+      <hr>
+
+      <div class="jumbotron">
+        <h1>Stop And Continue</h1>
+        <p class="lead">In this example we are going to stop the introduction and continue afterwards.</p>
+        <a class="btn btn-large btn-success" href="javascript:void(0);" onclick="startIntro();">Show me how</a>
+        <hr>
+        <p>Pick a user role:</p>
+        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole(null);">No role</a>
+        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole('user');">User</a>
+        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole('tester');">Tester</a>
+        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole('admin');">Admin</a>
+        <hr>
+        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole(['user', 'tester']);">User &amp; Tester both!</a>
+        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole(['user', 'tester', 'admin']);">All these roles!</a>
+      </div>
+
+      <hr>
+
+      <div class="row-fluid marketing">
+        <div id="step1" class="span6">
+          <label target="step1-input">Step #1: value = 1</label>
+          <input type='text' name="step1-input" id="step1-input" placeholder="Enter the value 1 in here" />
+        </div>
+
+        <div id="step2" class="span6">
+          <h4>Section One</h4>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis mollis augue a neque cursus ac blandit orci faucibus. Phasellus nec metus purus.</p>
+
+          <h4>Section Two</h4>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis mollis augue a neque cursus ac blandit orci faucibus. Phasellus nec metus purus.</p>
+
+          <h4>Section Three</h4>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis mollis augue a neque cursus ac blandit orci faucibus. Phasellus nec metus purus.</p>
+        </div>
+
+        <div id="step3" class="span6">
+          <h4>Section Four</h4>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis mollis augue a neque cursus ac blandit orci faucibus. Phasellus nec metus purus.</p>
+
+
+          <h4>Section Five</h4>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis mollis augue a neque cursus ac blandit orci faucibus. Phasellus nec metus purus.</p>
+
+          <h4>Section Six</h4>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis mollis augue a neque cursus ac blandit orci faucibus. Phasellus nec metus purus.</p>
+        </div>
+      </div>
+
+      <hr>
+
+    </div>
+    <script type="text/javascript" src="../../intro.js"></script>
+    <script type="text/javascript">
+      var intro;
+      function startIntro(){
+        if (!intro) {
+          intro = introJs();
+        }
+        intro.setOptions({
+            steps: [
+              {
+                element: document.querySelector('#step1'),
+                intro: "Enter the value '1' in the input field'.<br><br><b>Notes</b>:<br><ul><li>You will <strong>not</strong> continue to the next step until you have entered that value!</li><li>You do not need to abort the introduction to perform the edit as you can click and edit the indicated field right away!</li></ul>"
+              },
+              {
+                element: document.querySelectorAll('#step2')[0],
+                intro: {
+                  user: "Hi User, this is specifically written for you! Great, uh?",
+                  tester: "Hello Tester, are you just looking at this or coming up with new ways to break the code?",
+                  admin: "Whoops. I bet <a target='_blank' href='http://bofh.ntk.net/BOFH/index.php'>this is you</a>. So sorry to bother you. It won't happen again, I swear!",
+                  default: "You've got no role! If we hadn't supplied a <code>default</code> entry here your developer would have seen an exception and you would be staring at a b0rked screen!"
+                },
+                position: 'right'
+              },
+              {
+                element: '#step3',
+                intro: {
+                  user: "<a target='_blank' href='http://www.collectedcurios.com/sequentialart.php?s=605'>We appreciate our users the mostest</a>, so they get special treatment.",
+                  default: "Only <b>users</b> receive special attention; you will have to do with this generic entry."
+                },
+                position: 'left'
+              },
+              {
+                element: '#step4',
+                intro: {
+                  default: "Another step. You got the <b>default</b> as does everybody else because this entry addresses an unattainable 'role'.",
+                  saint: "&lt;bow&gt;"
+                },
+                position: 'bottom'
+              },
+              {
+                element: '#step5',
+                intro: 'Get it, use it.'
+              }
+            ]
+        });
+
+        intro.start();
+      }
+
+      function setRole(roles) {
+        if (!intro) {
+          intro = introJs();
+        }
+        intro.setOption('activeRoles', roles);
+      }
+    </script>
+  </body>
+</html>
