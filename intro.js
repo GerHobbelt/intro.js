@@ -493,8 +493,11 @@
 
       //remove old classes
       var oldShowElement = document.querySelector('.introjs-showElement');
-      oldShowElement.className = oldShowElement.className.replace(/introjs-[a-zA-Z]+/g, '').replace(/^\s+|\s+$/g, '');
-      //we should wait until the CSS3 transition is competed (it's 0.3 sec) to prevent incorrect `height` and `width` calculation
+      // be robust against complex rerendering/updating of the addressed DOM node by any application user code:
+      if (oldShowElement) {
+        oldShowElement.className = oldShowElement.className.replace(/introjs-[a-zA-Z]+/g, '').replace(/^\s+|\s+$/g, '');
+      }
+      //we should wait until the CSS3 transition is completed (it's 0.3 sec) to prevent incorrect `height` and `width` calculation
       if (self._lastShowElementTimer) {
         clearTimeout(self._lastShowElementTimer);
       }
@@ -515,7 +518,6 @@
         //show the tooltip
         oldtooltipContainer.style.opacity = 1;
       }, 350);
-
     } else {
       var helperLayer       = document.createElement('div'),
           arrowLayer        = document.createElement('div'),
