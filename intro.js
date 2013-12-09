@@ -53,7 +53,11 @@
       /* Show tour control buttons? */
       showButtons: true,
       /* Show tour bullets? */
-      showBullets: true
+      showBullets: true,
+      /* {String|Array} Which are the current role(s) of the user? (We can serve different content based on user role.) */
+      activeRoles: null,
+      /* {Function} Wrap the intro text in a user specified template. Function call interface: function(roleAndText, index, collectedIntroTexts) */
+      textTemplateCallback: null
     };
   }
 
@@ -394,6 +398,62 @@
   }
 
   /**
+   * Render the appropriate intro text, depending on the active user role (introJS.options.activeRoles)
+   * and the available intro text(s).
+   *
+   * @api private
+   * @method _renderIntroText
+   * @param {Object} targetElement
+   * @this  {Object} IntroJs 
+   * @returns {String} rendered (HTML) text
+   */
+  function _renderIntroText(targetElement) {
+    if (!targetElement.intro) {
+      throw new Error("IntroJS: no intro text specified for the target");           // TODO: notify user of lack of intro text at all?
+    }
+    var roles = [].concat(this._options.activeRoles);
+    var role;
+    var msg = [];
+    var tpl = this._options.textTemplateCallback || function (roleAndText, index, collectedIntroTexts) {
+      if (index > 0) {
+        return '<hr class="intro-role-text-separator"/>' + roleAndText.text;
+      } else {
+        return roleAndText.text;
+      }
+    };
+
+    for (var i = 0; (role = roles[i]); i++) {
+      if (targetElement.intro[role]) {
+        msg.push({
+          role: role,
+          text: targetElement.intro[role]
+        });
+      }
+    }
+    // if there no roles listed OR the intro field does not include suitable texts for any of the active roles,
+    // we take the default intro text.
+    // ALSO when we play MULTIPLE roles at the same time, we want to see the default text (only once!) when
+    // NOT ALL those roles were served with their own directly targeted intro text (the default text is assumed
+    // to contain valuable information too!)
+    if (msg.length !== roles.length) {
+      if (targetElement.intro['default']) {
+        msg.push({
+          role: 'default',
+          text: targetElement.intro['default']
+        });
+      } else if (typeof targetElement.intro === 'string') {
+        msg.push({
+          role: 'default',
+          text: targetElement.intro
+        });
+      } else {
+        throw new Error("IntroJS: no DEFAULT intro text specified for the target");           // TODO: notify user of lack of intro text at all?
+      }
+    }
+    return msg.map(tpl).join("\n");
+  }
+
+  /**
    * Show an element on the page
    *
    * @api private
@@ -446,7 +506,7 @@
           oldHelperNumberLayer.innerHTML = targetElement.step;
         }
         //set current tooltip text
-        oldtooltipLayer.innerHTML = targetElement.intro;
+        oldtooltipLayer.innerHTML = _renderIntroText.call(self, targetElement);
         //set the tooltip position
         _placeTooltip.call(self, targetElement.element, oldtooltipContainer, oldArrowLayer);
         
@@ -477,7 +537,7 @@
       arrowLayer.className = 'introjs-arrow';
 
       tooltipTextLayer.className = 'introjs-tooltiptext';
-      tooltipTextLayer.innerHTML = targetElement.intro;
+      tooltipTextLayer.innerHTML = _renderIntroText.call(self, targetElement);
       
       bulletsLayer.className = 'introjs-bullets';
 
