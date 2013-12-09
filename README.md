@@ -11,12 +11,12 @@ Intro.js can be added to your site in three simple steps:
 
 > CDN hosted files are available at [jsDelivr](http://www.jsdelivr.com/#!intro.js) (click Show More) & [cdnjs](http://cdnjs.com/#introjs).
 
-**2)** Add `data-intro` and `data-step` to your HTML elements.  
+**2)** Add `data-intro` and `data-intro-step` to your HTML elements.  
 
 For example: 
 
 ```html
-<a href='http://google.com/' data-intro='Hello step one!'></a>
+<a href='http://google.com/' data-intro-text='Hello step one!'></a>
 ````
 
 See all attributes [here](https://github.com/usablica/intro.js/#attributes).
@@ -264,9 +264,9 @@ introJs().onbeforechange(function(targetElement) {
 ### Attributes:
 
  - `data-intro`: The tooltip text of step
- - `data-step`: Optionally define the number (priority) of step
- - `data-tooltipClass`: Optionally define a CSS class for tooltip
- - `data-position`: Optionally define the position of tooltip, `top`, `left`, `right` or `bottom`. Default is `bottom`
+ - `data-intro-step`: Optionally define the number (priority) of step
+ - `data-intro-tooltipClass`: Optionally define a CSS class for tooltip
+ - `data-intro-position`: Optionally define the position of tooltip, `top`, `left`, `right` or `bottom`. Default is `bottom`
 
 
 ### Options:
@@ -343,7 +343,7 @@ Want to learn faster and easier? Here we have **Instant IntroJs**, Packt Publish
    - Add step bullets with navigating
    - Add option to hide introduction navigating buttons
    - Make keyboard navigation optional
-   - Making `data-step` optional with elements
+   - Making `data-intro-step` optional with elements
    - Fix scroll issue when scrolling down to elements bigger than window
    - Fix Chrome version 30.0.1599.101 issue with hiding step numbers
    - Fix incorrect calling onExit callback when user clicks on overlay layer
@@ -389,7 +389,7 @@ Want to learn faster and easier? Here we have **Instant IntroJs**, Packt Publish
    - Fix keydown event unbinding bug.
 
  * **v0.2.0** - 2013-03-20
-   - Ability to define tooltip position with `data-position` attribute
+   - Ability to define tooltip position with `data-intro-position` attribute
    - Add `onexit` and `oncomplete` callback
    - Better scrolling functionality
    - Redesign navigating buttons + add previous button

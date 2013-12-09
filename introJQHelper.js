@@ -8,7 +8,7 @@ $.fn.introText = function (t, c){
   if(this.exists()){
 		c.val == 1 ? t=t+' (You can use the ←, →, enter or exit keys to navigate the tour.)' : 0;
 		this.first().attr('data-intro',t);
-		this.first().attr('data-step',c.val);
+		this.first().attr('data-intro-step',c.val);
     this.first().attr('data-intro-text',t); //if using the intro.js on this git
   	this.first().attr('data-intro-step',c.val); // if using the intro.js on this git
 		c.val++;

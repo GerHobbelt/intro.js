@@ -93,7 +93,7 @@
         return false;
       }
 
-      //first add intro items with data-step
+      //first add intro items with data-intro-step
       for (var i = 0, elmsLength = allIntroSteps.length; i < elmsLength; i++) {
         var currentElement = allIntroSteps[i];
         var step = parseInt(currentElement.getAttribute('data-intro-step'), 10);
@@ -109,7 +109,7 @@
         }
       }
 
-      //next add intro items without data-step
+      //next add intro items without data-intro-step
       //todo: we need a cleanup here, two loops are redundant
       var nextStep = 0;
       for (var i = 0, elmsLength = allIntroSteps.length; i < elmsLength; i++) {
@@ -452,7 +452,7 @@
         
         //change active bullet
         oldHelperLayer.querySelector('.introjs-bullets li > a.active').className = '';
-        oldHelperLayer.querySelector('.introjs-bullets li > a[data-stepnumber="' + targetElement.step + '"]').className = 'active';
+        oldHelperLayer.querySelector('.introjs-bullets li > a[data-intro-stepnumber="' + targetElement.step + '"]').className = 'active';
 
         //show the tooltip
         oldtooltipContainer.style.opacity = 1;
@@ -492,14 +492,14 @@
         var anchorLink = document.createElement('a');
 
         anchorLink.onclick = function() {
-          self.goToStep(this.getAttribute('data-stepnumber'));
+          self.goToStep(this.getAttribute('data-intro-stepnumber'));
         };
 
         if (i === 0) anchorLink.className = "active";
 
         anchorLink.href = 'javascript:void(0);';
         anchorLink.innerHTML = "&nbsp;";
-        anchorLink.setAttribute('data-stepnumber', this._introItems[i].step);
+        anchorLink.setAttribute('data-intro-stepnumber', this._introItems[i].step);
 
         innerLi.appendChild(anchorLink);
         ulContainer.appendChild(innerLi);
