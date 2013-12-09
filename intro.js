@@ -1,5 +1,5 @@
 /**
- * Intro.js v0.6.0
+ * Intro.js v0.6.1
  * https://github.com/usablica/intro.js
  * MIT licensed
  *
@@ -19,7 +19,7 @@
   }
 } (this, function (exports) {
   //Default config/variables
-  var VERSION = '0.6.0';
+  var VERSION = '0.6.1';
 
   /**
    * IntroJs main class
@@ -88,7 +88,6 @@
         }
         introItems.push(currentItem);
       }
-
     } else {
       //use steps from data-intro-* annotations
       var allIntroSteps = targetElm.querySelectorAll('*[data-intro-text]');
@@ -120,9 +119,8 @@
         var currentElement = allIntroSteps[i];
 
         if (currentElement.getAttribute('data-intro-step') == null) {
-         
           while (true) {
-            if (typeof introItems[nextStep] == 'undefined') {
+            if (typeof introItems[nextStep] === 'undefined') {
               break;
             } else {
               nextStep++;
@@ -235,7 +233,7 @@
       ++this._currentStep;
     }
 
-    if ((this._introItems.length) <= this._currentStep) {
+    if (this._introItems.length <= this._currentStep) {
       //end of the intro
       //check if any callback is defined
       if (typeof (this._introCompleteCallback) === 'function') {
@@ -903,6 +901,9 @@
     goToStep: function(step) {
       _goToStep.call(this, step);
       return this;
+    },
+    getCurrentStep: function() {
+      return this._currentStep;
     },
     exit: function() {
       _exitIntro.call(this, this._targetElement);

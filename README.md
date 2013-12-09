@@ -80,7 +80,7 @@ Go to specific step of introduction.
 **Available since**: v0.3.0
 
 **Parameters:**
- - step : Number
+ - step : Number ('1-based': the first step of an IntroJS sequence is step 1)
 
 **Returns:**
  - introJs object.
@@ -88,6 +88,26 @@ Go to specific step of introduction.
 **Example:**
 ```javascript
 introJs().goToStep(2).start(); //starts introduction from step 2
+````
+
+-----
+
+
+### introJs.getCurrentStep()
+
+Get the (1-based) index of the currently active step of introduction.
+
+**Available since**: v0.6.1
+
+**Parameters:**
+ - none
+
+**Returns:**
+ - Number ('1-based': the first step of an IntroJS sequence is step 1)
+
+**Example:**
+```javascript
+var index = introJs().getCurrentStep();
 ````
 
 -----
