@@ -11,7 +11,7 @@ Intro.js can be added to your site in three simple steps:
 
 > CDN hosted files are available at [jsDelivr](http://www.jsdelivr.com/#!intro.js) (click Show More) & [cdnjs](http://cdnjs.com/#introjs).
 
-**2)** Add `data-intro` and `data-intro-step` to your HTML elements.  
+**2)** Add `data-intro-text` and `data-intro-step` to your HTML elements.  
 
 For example: 
 
