@@ -283,7 +283,7 @@ introJs().onbeforechange(function(targetElement) {
 
 ### Attributes:
 
- - `data-intro`: The tooltip text of step
+ - `data-intro-text`: The tooltip text of step
  - `data-intro-step`: Optionally define the number (priority) of step
  - `data-intro-tooltipClass`: Optionally define a CSS class for tooltip
  - `data-intro-position`: Optionally define the position of tooltip, `top`, `left`, `right` or `bottom`. Default is `bottom`
