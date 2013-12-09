@@ -1,5 +1,5 @@
 /**
- * Intro.js v0.5.0
+ * Intro.js v0.6.0
  * https://github.com/usablica/intro.js
  * MIT licensed
  *
@@ -19,7 +19,7 @@
   }
 } (this, function (exports) {
   //Default config/variables
-  var VERSION = '0.5.0';
+  var VERSION = '0.6.0';
 
   /**
    * IntroJs main class
@@ -49,7 +49,11 @@
       /* Show step numbers in introduction? */
       showStepNumbers: true,
       /* Let user use keyboard to navigate the tour? */
-      keyboardNavigation: true
+      keyboardNavigation: true,
+      /* Show tour control buttons? */
+      showButtons: true,
+      /* Show tour bullets? */
+      showBullets: true
     };
   }
 
@@ -113,7 +117,7 @@
 
         if (currentElement.getAttribute('data-intro-step') == null) {
          
-          while(true) {
+          while (true) {
             if (typeof introItems[nextStep] == 'undefined') {
               break;
             } else {
@@ -121,19 +125,24 @@
             }
           }
 
-          introItems.push({
+          introItems[nextStep] = {
             element: currentElement,
             intro: currentElement.getAttribute('data-intro-text'),
             step: nextStep + 1,
             tooltipClass: currentElement.getAttribute('data-intro-tooltipClass'),
             position: currentElement.getAttribute('data-intro-position') || this._options.tooltipPosition
-          });
+          };
         }
       }
     }
 
     //removing undefined/null elements
-    introItems = introItems.filter(function(n){ return n; });
+    var tempIntroItems = [];
+    for (var z = 0; z < introItems.length; z++) {
+      introItems[z] && tempIntroItems.push(introItems[z]);  // copy non-empty values to the end of the array
+    }
+    
+    introItems = tempIntroItems;
 
     //Ok, sort all items with given steps
     introItems.sort(function (a, b) {
@@ -148,7 +157,7 @@
       //then, start the show
       _nextStep.call(self);
 
-      var skipButton = targetElm.querySelector('.introjs-skipbutton'),
+      var skipButton     = targetElm.querySelector('.introjs-skipbutton'),
           nextStepButton = targetElm.querySelector('.introjs-nextbutton');
 
       self._onKeyDown = function(e) {
@@ -204,7 +213,7 @@
   function _goToStep(step) {
     //because steps starts with zero
     this._currentStep = step - 2;
-    if(typeof (this._introItems) !== 'undefined') {
+    if (typeof (this._introItems) !== 'undefined') {
       _nextStep.call(this);
     }
   }
@@ -222,7 +231,7 @@
       ++this._currentStep;
     }
 
-    if((this._introItems.length) <= this._currentStep) {
+    if ((this._introItems.length) <= this._currentStep) {
       //end of the intro
       //check if any callback is defined
       if (typeof (this._introCompleteCallback) === 'function') {
@@ -321,7 +330,7 @@
     tooltipLayer.style.left    = null;
 
     //prevent error when `this._currentStep` is undefined
-    if(!this._introItems[this._currentStep]) return;
+    if (!this._introItems[this._currentStep]) return;
 
     var tooltipCssClass = '';
 
@@ -371,9 +380,9 @@
    * @param {Object} helperLayer
    */
   function _setHelperLayerPosition(helperLayer) {
-    if(helperLayer) {
+    if (helperLayer) {
       //prevent error when `this._currentStep` in undefined
-      if(!this._introItems[this._currentStep]) return;
+      if (!this._introItems[this._currentStep]) return;
 
       var elementPosition = _getOffset(this._introItems[this._currentStep].element);
       //set new position to helper layer
@@ -401,7 +410,7 @@
         oldHelperLayer = document.querySelector('.introjs-helperLayer'),
         elementPosition = _getOffset(targetElement.element);
 
-    if(oldHelperLayer != null) {
+    if (oldHelperLayer != null) {
       var oldHelperNumberLayer = oldHelperLayer.querySelector('.introjs-helperNumberLayer'),
           oldtooltipLayer      = oldHelperLayer.querySelector('.introjs-tooltiptext'),
           oldArrowLayer        = oldHelperLayer.querySelector('.introjs-arrow'),
@@ -409,7 +418,7 @@
           skipTooltipButton    = oldHelperLayer.querySelector('.introjs-skipbutton'),
           prevTooltipButton    = oldHelperLayer.querySelector('.introjs-prevbutton'),
           nextTooltipButton    = oldHelperLayer.querySelector('.introjs-nextbutton');
-
+          
       //hide the tooltip
       oldtooltipContainer.style.opacity = 0;
 
@@ -433,21 +442,29 @@
       }
       self._lastShowElementTimer = setTimeout(function() {
         //set current step to the label
-        if(oldHelperNumberLayer != null) {
+        if (oldHelperNumberLayer != null) {
           oldHelperNumberLayer.innerHTML = targetElement.step;
         }
         //set current tooltip text
         oldtooltipLayer.innerHTML = targetElement.intro;
         //set the tooltip position
         _placeTooltip.call(self, targetElement.element, oldtooltipContainer, oldArrowLayer);
+        
+        //change active bullet
+        oldHelperLayer.querySelector('.introjs-bullets li > a.active').className = '';
+        oldHelperLayer.querySelector('.introjs-bullets li > a[data-stepnumber="' + targetElement.step + '"]').className = 'active';
+
         //show the tooltip
         oldtooltipContainer.style.opacity = 1;
       }, 350);
 
     } else {
-      var helperLayer  = document.createElement('div'),
-          arrowLayer   = document.createElement('div'),
-          tooltipLayer = document.createElement('div');
+      var helperLayer       = document.createElement('div'),
+          arrowLayer        = document.createElement('div'),
+          tooltipLayer      = document.createElement('div'),
+          tooltipTextLayer  = document.createElement('div'),
+          bulletsLayer      = document.createElement('div'),
+          buttonsLayer      = document.createElement('div');
 
       helperLayer.className = 'introjs-helperLayer';
 
@@ -459,12 +476,48 @@
 
       arrowLayer.className = 'introjs-arrow';
 
-      tooltipLayer.innerHTML = '<div class="introjs-tooltiptext">' +
-                               targetElement.intro +
-                               '</div><div class="introjs-tooltipbuttons"></div>';
+      tooltipTextLayer.className = 'introjs-tooltiptext';
+      tooltipTextLayer.innerHTML = targetElement.intro;
+      
+      bulletsLayer.className = 'introjs-bullets';
+
+      if (this._options.showBullets === false) {
+        bulletsLayer.style.display = 'none';
+      }
+
+      var ulContainer = document.createElement('ul');
+
+      for (var i = 0, stepsLength = this._introItems.length; i < stepsLength; i++) {
+        var innerLi    = document.createElement('li');
+        var anchorLink = document.createElement('a');
+
+        anchorLink.onclick = function() {
+          self.goToStep(this.getAttribute('data-stepnumber'));
+        };
+
+        if (i === 0) anchorLink.className = "active";
+
+        anchorLink.href = 'javascript:void(0);';
+        anchorLink.innerHTML = "&nbsp;";
+        anchorLink.setAttribute('data-stepnumber', this._introItems[i].step);
+
+        innerLi.appendChild(anchorLink);
+        ulContainer.appendChild(innerLi);
+      }
+
+      bulletsLayer.appendChild(ulContainer);
+
+      buttonsLayer.className = 'introjs-tooltipbuttons';
+      if (this._options.showButtons === false) {
+        buttonsLayer.style.display = 'none';
+      }
+
+      tooltipLayer.className = 'introjs-tooltip';
+      tooltipLayer.appendChild(tooltipTextLayer);
+      tooltipLayer.appendChild(bulletsLayer);
 
       //add helper layer number
-      if (this._options.showStepNumbers) {
+      if (this._options.showStepNumbers == true) {
         var helperNumberLayer = document.createElement('span');
         helperNumberLayer.className = 'introjs-helperNumberLayer';
         helperNumberLayer.innerHTML = targetElement.step;
@@ -477,7 +530,7 @@
       var nextTooltipButton = document.createElement('a');
 
       nextTooltipButton.onclick = function() {
-        if(self._introItems.length - 1 != self._currentStep) {
+        if (self._introItems.length - 1 != self._currentStep) {
           _nextStep.call(self);
         }
       };
@@ -489,7 +542,7 @@
       var prevTooltipButton = document.createElement('a');
 
       prevTooltipButton.onclick = function() {
-        if(self._currentStep != 0) {
+        if (self._currentStep != 0) {
           _previousStep.call(self);
         }
       };
@@ -515,14 +568,15 @@
         _exitIntro.call(self, self._targetElement);
       };
 
-      var tooltipButtonsLayer = tooltipLayer.querySelector('.introjs-tooltipbuttons');
-      tooltipButtonsLayer.appendChild(skipTooltipButton);
+      buttonsLayer.appendChild(skipTooltipButton);
 
       //in order to prevent displaying next/previous button always
       if (this._introItems.length > 1) {
-        tooltipButtonsLayer.appendChild(prevTooltipButton);
-        tooltipButtonsLayer.appendChild(nextTooltipButton);
+        buttonsLayer.appendChild(prevTooltipButton);
+        buttonsLayer.appendChild(nextTooltipButton);
       }
+
+      tooltipLayer.appendChild(buttonsLayer);
 
       //set proper position
       _placeTooltip.call(self, targetElement.element, tooltipLayer, arrowLayer);
@@ -556,11 +610,11 @@
     }
 
     var parentElm = targetElement.element.parentNode;
-    while(parentElm != null) {
-      if(parentElm.tagName.toLowerCase() === 'body') break;
+    while (parentElm != null) {
+      if (parentElm.tagName.toLowerCase() === 'body') break;
 
       var zIndex = _getPropValue(parentElm, 'z-index');
-      if(/[0-9]+/.test(zIndex)) {
+      if (/[0-9]+/.test(zIndex)) {
         parentElm.className += ' introjs-fixParent';
       }
       parentElm = parentElm.parentNode;
@@ -667,7 +721,7 @@
     } else {
       //set overlay layer position
       var elementPosition = _getOffset(targetElm);
-      if(elementPosition) {
+      if (elementPosition) {
         styleText += 'width: ' + elementPosition.width + 'px; height:' + elementPosition.height + 'px; top:' + elementPosition.top + 'px;left: ' + elementPosition.left + 'px;';
         overlayLayer.setAttribute('style', styleText);
       }
@@ -678,10 +732,11 @@
     overlayLayer.onclick = function() {
       if (self._options.exitOnOverlayClick == true) {
         _exitIntro.call(self, targetElm);
-      }
-      //check if any callback is defined
-      if (self._introExitCallback != undefined) {
-        self._introExitCallback.call(self);
+
+        //check if any callback is defined
+        if (self._introExitCallback != undefined) {
+          self._introExitCallback.call(self);
+        }
       }
     };
 
@@ -713,7 +768,7 @@
     //calculate element top and left
     var _x = 0;
     var _y = 0;
-    while(element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
+    while (element && !isNaN(element.offsetLeft) && !isNaN(element.offsetTop)) {
       _x += element.offsetLeft;
       _y += element.offsetTop;
       element = element.offsetParent;
