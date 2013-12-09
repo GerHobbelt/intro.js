@@ -86,37 +86,37 @@
       }
 
     } else {
-       //use steps from data-* annotations
-      var allIntroSteps = targetElm.querySelectorAll('*[data-intro]');
+      //use steps from data-intro-* annotations
+      var allIntroSteps = targetElm.querySelectorAll('*[data-intro-text]');
       //if there's no element to intro
       if (allIntroSteps.length < 1) {
         return false;
       }
 
-      //first add intro items with data-step
+      //first add intro items with data-intro-step
       for (var i = 0, elmsLength = allIntroSteps.length; i < elmsLength; i++) {
         var currentElement = allIntroSteps[i];
-        var step = parseInt(currentElement.getAttribute('data-step'), 10);
+        var step = parseInt(currentElement.getAttribute('data-intro-step'), 10);
 
         if (step > 0) {
           introItems[step - 1] = {
             element: currentElement,
-            intro: currentElement.getAttribute('data-intro'),
-            step: parseInt(currentElement.getAttribute('data-step'), 10),
-	    tooltipClass: currentElement.getAttribute('data-tooltipClass'),
-            position: currentElement.getAttribute('data-position') || this._options.tooltipPosition
+            intro: currentElement.getAttribute('data-intro-text'),
+            step: parseInt(currentElement.getAttribute('data-intro-step'), 10),
+	        tooltipClass: currentElement.getAttribute('data-intro-tooltipClass'),
+            position: currentElement.getAttribute('data-intro-position') || this._options.tooltipPosition
           };
         }
       }
 
-      //next add intro items without data-step
+      //next add intro items without data-intro-step
       //todo: we need a cleanup here, two loops are redundant
       var nextStep = 0;
       for (var i = 0, elmsLength = allIntroSteps.length; i < elmsLength; i++) {
         var currentElement = allIntroSteps[i];
 
-        if (currentElement.getAttribute('data-step') == null) {
-          
+        if (currentElement.getAttribute('data-intro-step') == null) {
+         
           while (true) {
             if (typeof introItems[nextStep] == 'undefined') {
               break;
@@ -127,10 +127,10 @@
 
           introItems[nextStep] = {
             element: currentElement,
-            intro: currentElement.getAttribute('data-intro'),
+            intro: currentElement.getAttribute('data-intro-text'),
             step: nextStep + 1,
-	    tooltipClass: currentElement.getAttribute('data-tooltipClass'),
-            position: currentElement.getAttribute('data-position') || this._options.tooltipPosition
+            tooltipClass: currentElement.getAttribute('data-intro-tooltipClass'),
+            position: currentElement.getAttribute('data-intro-position') || this._options.tooltipPosition
           };
         }
       }
@@ -153,7 +153,7 @@
     self._introItems = introItems;
 
     //add overlay layer to the page
-    if(_addOverlayLayer.call(self, targetElm)) {
+    if (_addOverlayLayer.call(self, targetElm)) {
       //then, start the show
       _nextStep.call(self);
 
@@ -168,14 +168,14 @@
           if (self._introExitCallback != undefined) {
             self._introExitCallback.call(self);
           }
-        } else if(e.keyCode === 37) {
+        } else if (e.keyCode === 37) {
           //left arrow
           _previousStep.call(self);
         } else if (e.keyCode === 39 || e.keyCode === 13) {
           //right arrow or enter
           _nextStep.call(self);
           //prevent default behaviour on hitting Enter, to prevent steps being skipped in some browsers
-          if(e.preventDefault) {
+          if (e.preventDefault) {
             e.preventDefault();
           } else {
             e.returnValue = false;
@@ -452,7 +452,7 @@
         
         //change active bullet
         oldHelperLayer.querySelector('.introjs-bullets li > a.active').className = '';
-        oldHelperLayer.querySelector('.introjs-bullets li > a[data-stepnumber="' + targetElement.step + '"]').className = 'active';
+        oldHelperLayer.querySelector('.introjs-bullets li > a[data-intro-stepnumber="' + targetElement.step + '"]').className = 'active';
 
         //show the tooltip
         oldtooltipContainer.style.opacity = 1;
@@ -492,14 +492,14 @@
         var anchorLink = document.createElement('a');
 
         anchorLink.onclick = function() {
-          self.goToStep(this.getAttribute('data-stepnumber'));
+          self.goToStep(this.getAttribute('data-intro-stepnumber'));
         };
 
         if (i === 0) anchorLink.className = "active";
 
         anchorLink.href = 'javascript:void(0);';
         anchorLink.innerHTML = "&nbsp;";
-        anchorLink.setAttribute('data-stepnumber', this._introItems[i].step);
+        anchorLink.setAttribute('data-intro-stepnumber', this._introItems[i].step);
 
         innerLi.appendChild(anchorLink);
         ulContainer.appendChild(innerLi);
@@ -622,7 +622,7 @@
 
     if (!_elementInViewport(targetElement.element)) {
       var rect = targetElement.element.getBoundingClientRect(),
-        winHeight=_getWinSize().height,
+        winHeight = _getWinSize().height,
         top = rect.bottom - (rect.bottom - rect.top),
         bottom = rect.bottom - winHeight;
 
@@ -694,7 +694,7 @@
     return (
       rect.top >= 0 &&
       rect.left >= 0 &&
-      (rect.bottom+80) <= window.innerHeight && // add 80 to get the text right
+      (rect.bottom + 80) <= window.innerHeight && // add 80 to get the text right
       rect.right <= window.innerWidth
     );
   }

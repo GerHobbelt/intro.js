@@ -8,3 +8,6 @@
 # NPM/NodeJS stuff
 node_modules
 
+# misc dreck
+.DS_Store
+
