@@ -164,12 +164,15 @@
 
       self._onKeyDown = function(e) {
         if (e.keyCode === 27 && self._options.exitOnEsc == true) {
-          //escape key pressed, exit the intro
-          _exitIntro.call(self, targetElm);
+          //escape key pressed
           //check if any callback is defined
           if (self._introExitCallback != undefined) {
-            self._introExitCallback.call(self);
+            self._introExitCallback.call(self, {
+              keyDownEvent: e
+            });
           }
+          //exit the intro
+          _exitIntro.call(self, targetElm);
         } else if (e.keyCode === 37) {
           //left arrow
           _previousStep.call(self);
@@ -237,7 +240,9 @@
       //end of the intro
       //check if any callback is defined
       if (typeof (this._introCompleteCallback) === 'function') {
-        this._introCompleteCallback.call(this);
+        this._introCompleteCallback.call(this, {
+          nextStep: this._currentStep
+        });
       }
       _exitIntro.call(this, this._targetElement);
       return;
@@ -616,13 +621,17 @@
       skipTooltipButton.href = 'javascript:void(0);';
       skipTooltipButton.innerHTML = this._options.skipLabel;
 
-      skipTooltipButton.onclick = function() {
+      skipTooltipButton.onclick = function(e) {
         if (self._introItems.length - 1 == self._currentStep && typeof (self._introCompleteCallback) === 'function') {
-          self._introCompleteCallback.call(self);
+          self._introCompleteCallback.call(self, {
+            skipButtonEvent: e
+          });
         }
 
         if (self._introItems.length - 1 != self._currentStep && typeof (self._introExitCallback) === 'function') {
-          self._introExitCallback.call(self);
+          self._introExitCallback.call(self, {
+            skipButtonEvent: e
+          }); 
         }
 
         _exitIntro.call(self, self._targetElement);
@@ -789,14 +798,16 @@
 
     targetElm.appendChild(overlayLayer);
 
-    overlayLayer.onclick = function() {
+    overlayLayer.onclick = function(e) {
       if (self._options.exitOnOverlayClick == true) {
-        _exitIntro.call(self, targetElm);
-
         //check if any callback is defined
         if (self._introExitCallback != undefined) {
-          self._introExitCallback.call(self);
+          self._introExitCallback.call(self, {
+            overlayClickEvent: e
+          });
         }
+
+        _exitIntro.call(self, targetElm);
       }
     };
 
@@ -906,6 +917,9 @@
     },
     getCurrentStep: function() {
       return this._currentStep;
+    },
+    getOverlay: function() {
+      return this._targetElement.querySelector('.introjs-overlay');
     },
     exit: function() {
       _exitIntro.call(this, this._targetElement);
