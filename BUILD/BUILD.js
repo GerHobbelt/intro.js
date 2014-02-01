@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* jshint node: true */
+
 var fs = require('fs'),
   compressor = require('node-minify');
 
