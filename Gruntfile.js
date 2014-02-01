@@ -171,7 +171,7 @@ module.exports = function (grunt) {
         ]
       },
       files: {
-        src: 'examples/**/*.html'
+        src: 'example/**/*.html'
       }
     },
 
@@ -205,9 +205,9 @@ module.exports = function (grunt) {
   // Full distribution task.
   grunt.registerTask('dist', ['clean', 'dist-css', 'dist-js']);
 
-  // Default task.
-  grunt.registerTask('rubbish', ['test', 'lint', 'dist']);
+  // Lint task.
+  grunt.registerTask('lint', ['csslint', 'jshint', 'jscs']);
 
   // Default task.
-  grunt.registerTask('lint', ['csslint', 'jshint', 'jscs']);
+  grunt.registerTask('default', ['test', 'lint', 'dist']);
 };
