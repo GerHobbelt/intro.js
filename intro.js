@@ -106,7 +106,7 @@
             element: currentElement,
             intro: currentElement.getAttribute('data-intro-text'),
             step: parseInt(currentElement.getAttribute('data-intro-step'), 10),
-	          tooltipClass: currentElement.getAttribute('data-intro-tooltipClass'),
+            tooltipClass: currentElement.getAttribute('data-intro-tooltipClass'),
             position: currentElement.getAttribute('data-intro-position') || this._options.tooltipPosition
           };
         }
@@ -407,7 +407,7 @@
    * @api private
    * @method _renderIntroText
    * @param {Object} targetElement
-   * @this  {Object} IntroJs 
+   * @this {Object} IntroJs
    * @returns {String} rendered (HTML) text
    */
   function _renderIntroText(targetElement) {
@@ -631,7 +631,7 @@
         if (self._introItems.length - 1 != self._currentStep && typeof (self._introExitCallback) === 'function') {
           self._introExitCallback.call(self, {
             skipButtonEvent: e
-          }); 
+          });
         }
 
         _exitIntro.call(self, self._targetElement);

@@ -6,15 +6,15 @@ $.fn.exists = function () {
 //quick attach numbered intro text
 $.fn.introText = function (t, c){
   if(this.exists()){
-		c.val == 1 ? t=t+' (You can use the ←, →, enter or exit keys to navigate the tour.)' : 0;
-		this.first().attr('data-intro',t);
-		this.first().attr('data-intro-step',c.val);
+    c.val == 1 ? t=t+' (You can use the ←, →, enter or exit keys to navigate the tour.)' : 0;
+    this.first().attr('data-intro',t);
+    this.first().attr('data-intro-step',c.val);
     this.first().attr('data-intro-text',t); //if using the intro.js on this git
-  	this.first().attr('data-intro-step',c.val); // if using the intro.js on this git
-		c.val++;
-		return true;
-	}
-	return false;
+    this.first().attr('data-intro-step',c.val); // if using the intro.js on this git
+    c.val++;
+    return true;
+  }
+  return false;
 };
 
 //Start intro click (just set class introStart on a clickable element)
@@ -33,14 +33,20 @@ $('.introStart').click(function(){
 
   var nextPage = $(this).attr('data-intro-next-href'); //a valid href for next page does not validate
   var nextSection = $(this).attr('data-intro-next-section'); //the selector designated by data-intro-next-section kinda works, seems clunky
-	var section = $(this).attr('data-intro-section'); //the selector designated by data-intro-section
+  var section = $(this).attr('data-intro-section'); //the selector designated by data-intro-section
   if(nextPage){
-  	//Arbitrarily decided next page is only on whole page intros, and will not do a section intro if section is set
-  	introJs().setOption('doneLabel','Next Page').start().oncomplete(function(){ window.location.href=nextPage });
+    //Arbitrarily decided next page is only on whole page intros, and will not do a section intro if section is set
+    introJs().setOption('doneLabel','Next Page').start().oncomplete(function(){
+      window.location.href=nextPage;
+    });
   }else if($(nextSection).exists()){
     //this works but is wonky
-  	$(section).exists() ? introJs(section).setOption('doneLabel','Next Section').start().oncomplete(function(){ introJs(nextSection).start() }) : introJs().setOption('doneLabel','Next Section').start().oncomplete(function(){ introJs(nextSection).start() });
+    $(section).exists() ? introJs(section).setOption('doneLabel','Next Section').start().oncomplete(function(){
+      introJs(nextSection).start();
+    }) : introJs().setOption('doneLabel','Next Section').start().oncomplete(function(){
+      introJs(nextSection).start();
+    });
   }else{
-  	$(section).exists() ? introJs(section).start() : introJs().start();
+    $(section).exists() ? introJs(section).start() : introJs().start();
   }
 });
