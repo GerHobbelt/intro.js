@@ -393,8 +393,15 @@ Here you can find an IntroJs integration for Drupal: https://drupal.org/sandbox/
 ### AngularJS 
 
 For AngularJS, you can use the directives in [angular-intro.js](http://code.mendhak.com/angular-intro.js/).
+
     
-    
+### Wordpress
+
+You can use IntroJS inside your Wordpress, here is a good article by SitePoint: http://www.sitepoint.com/creating-intro-js-powered-tours-wordpress/
+
+Here is a under construction plugin for Wordpress: https://github.com/newoldmedia/intro.js-wordpress
+
+
 ## Build
 
 First you should install `nodejs` and `npm`, then first run this command: `npm install` to install all dependencies.
