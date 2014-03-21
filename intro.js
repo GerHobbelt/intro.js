@@ -20,14 +20,24 @@
 } (this, function (exports) {
   //Default config/variables
   var VERSION = '0.7.1';
+      attrNames = {
+        step: 'data-intro-step',
+        text: 'data-intro-text',
+        key: 'data-intro-key',
+        tooltip: 'data-intro-tooltipClass',
+        position: 'data-intro-position',
+        stepnumber: 'data-intro-stepnumber'
+      };
 
   /**
    * IntroJs main class
    *
    * @class IntroJs
    */
-  function IntroJs(obj) {
+  function IntroJs(obj, textData) {
     this._targetElement = obj;
+
+    this._textData = textData || {};
 
     this._options = {
       /* Next button label in tooltip box */
@@ -62,9 +72,25 @@
       activeRoles: null,
       /* {Function} Wrap the intro text in a user specified template. Function call interface: function(roleAndText, index, collectedIntroTexts) */
       textTemplateCallback: null,
+      /* element to mask; by default it's the current target element */
+      maskTarget: null,
+      /* css class that indicates element is hidden, and so will be ignored by intro */
+      hiddenClass: null,
       /* previousStep and prevButton are disabled at these checkpoints (checkpoint = step number)? */
       checkpoints: []
     };
+  }
+
+  /**
+   * Support multilingual or otherwise run-time-changed introductions: the textData object
+   * contains a dictionary which maps element keys (data-intro-key) to actual texts, while
+   * (data-intro-text) serves as a fallback when the target element does not have a key assigned
+   * or when textData does not list the given key.
+   */
+  function _getIntroText(elm) {
+    var key = elm.getAttribute(attrNames.key);
+    var rv = key && key in this._textData ? this._textData[key] : elm.getAttribute(attrNames.text);
+    return rv || '';
   }
 
   /**
@@ -77,7 +103,16 @@
    */
   function _introForElement(targetElm) {
     var introItems = [],
-        self = this;
+        self = this,
+        usedKeys = [],
+        isKeyDuplicate = function (el) {
+            var val = el.getAttribute(attrNames.key),
+                noDup = val == null || usedKeys.indexOf(val) < 0;
+            if (noDup && val) {
+                usedKeys.push(val);
+            }
+            return !noDup;
+        };
 
     if (this._options.steps) {
       //use steps passed programmatically
@@ -99,7 +134,9 @@
       }
     } else {
       //use steps from data-intro-* annotations
-      var allIntroSteps = targetElm.querySelectorAll('*[data-intro-text]');
+      var suffix = this._options.hiddenClass ? ':not(' + this._options.hiddenClass + ')' : '',
+        selector = '*[' + attrNames.text + ']' + suffix + ', *[' + attrNames.key + ']' + suffix,
+        allIntroSteps = targetElm.querySelectorAll(selector);
       //if there's no element to intro
       if (allIntroSteps.length < 1) {
         return false;
@@ -108,15 +145,15 @@
       //first add intro items with data-intro-step
       for (var i = 0, elmsLength = allIntroSteps.length; i < elmsLength; i++) {
         var currentElement = allIntroSteps[i];
-        var step = parseInt(currentElement.getAttribute('data-intro-step'), 10);
+        var step = parseInt(currentElement.getAttribute(attrNames.step), 10);
 
-        if (step > 0) {
+        if (step > 0  && !isKeyDuplicate(currentElement)) {
           introItems[step - 1] = {
             element: currentElement,
-            intro: currentElement.getAttribute('data-intro-text'),
-            step: parseInt(currentElement.getAttribute('data-intro-step'), 10),
-            tooltipClass: currentElement.getAttribute('data-intro-tooltipClass'),
-            position: currentElement.getAttribute('data-intro-position') || this._options.tooltipPosition
+            intro: _getIntroText.call(self, currentElement),
+            step: parseInt(currentElement.getAttribute(attrNames.step), 10),
+            tooltipClass: currentElement.getAttribute(attrNames.tooltipClass),
+            position: currentElement.getAttribute(attrNames.position) || this._options.tooltipPosition
           };
         }
       }
@@ -127,7 +164,7 @@
       for (var i = 0, elmsLength = allIntroSteps.length; i < elmsLength; i++) {
         var currentElement = allIntroSteps[i];
 
-        if (currentElement.getAttribute('data-intro-step') == null) {
+        if (currentElement.getAttribute(attrNames.step) == null && !isKeyDuplicate(currentElement)) {
           while (true) {
             if (typeof introItems[nextStep] === 'undefined') {
               break;
@@ -138,10 +175,10 @@
 
           introItems[nextStep] = {
             element: currentElement,
-            intro: currentElement.getAttribute('data-intro-text'),
+            intro: _getIntroText.call(self, currentElement),
             step: nextStep + 1,
-            tooltipClass: currentElement.getAttribute('data-intro-tooltipClass'),
-            position: currentElement.getAttribute('data-intro-position') || this._options.tooltipPosition
+            tooltipClass: currentElement.getAttribute(attrNames.tooltipClass),
+            position: currentElement.getAttribute(attrNames.position) || this._options.tooltipPosition
           };
         }
       }
@@ -164,7 +201,7 @@
     self._introItems = introItems;
 
     //add overlay layer to the page
-    if (_addOverlayLayer.call(self, targetElm)) {
+    if (_addOverlayLayer.call(self, (self._options.maskTarget || targetElm))) {
       //then, start the show
       _nextStep.call(self);
 
@@ -315,7 +352,7 @@
    */
   function _exitIntro(targetElement) {
     //remove overlay layer from the page
-    var overlayLayer = targetElement.querySelector('.introjs-overlay');
+    var overlayLayer = (this._options.maskTarget || targetElement).querySelector('.introjs-overlay');
     //return if intro already completed or skipped
     if (overlayLayer == null) {
       return;
@@ -430,7 +467,8 @@
 
       var elementPosition = _getOffset(this._introItems[this._currentStep].element);
       //set new position to helper layer
-      helperLayer.setAttribute('style', 'width: ' + (elementPosition.width  + 10)  + 'px; ' +
+      helperLayer.setAttribute('style', 'position: fixed; ' +
+                                        'width: ' + (elementPosition.width  + 10)  + 'px; ' +
                                         'height:' + (elementPosition.height + 10)  + 'px; ' +
                                         'top:'    + (elementPosition.top    - 5)   + 'px;' +
                                         'left: '  + (elementPosition.left   - 5)   + 'px;');
@@ -444,7 +482,7 @@
    * @api private
    * @method _renderIntroText
    * @param {Object} targetElement
-   * @this {Object} IntroJs
+   * @this  {Object} IntroJs
    * @returns {String} rendered (HTML) text
    */
   function _renderIntroText(targetElement) {
@@ -555,7 +593,7 @@
 
         //change active bullet
         oldHelperLayer.querySelector('.introjs-bullets li > a.active').className = '';
-        oldHelperLayer.querySelector('.introjs-bullets li > a[data-intro-stepnumber="' + targetElement.step + '"]').className = 'active';
+        oldHelperLayer.querySelector('.introjs-bullets li > a[' + attrNames.stepnumber + '="' + targetElement.step + '"]').className = 'active';
 
         //show the tooltip
         oldtooltipContainer.style.opacity = 1;
@@ -594,14 +632,14 @@
         var anchorLink = document.createElement('a');
 
         anchorLink.onclick = function() {
-          self.goToStep(this.getAttribute('data-intro-stepnumber'));
+          self.goToStep(this.getAttribute(attrNames.stepnumber));
         };
 
         if (i === 0) anchorLink.className = "active";
 
         anchorLink.href = 'javascript:void(0);';
         anchorLink.innerHTML = "&nbsp;";
-        anchorLink.setAttribute('data-intro-stepnumber', this._introItems[i].step);
+        anchorLink.setAttribute(attrNames.stepnumber, this._introItems[i].step);
 
         innerLi.appendChild(anchorLink);
         ulContainer.appendChild(innerLi);
@@ -927,9 +965,9 @@
       element = element.offsetParent;
     }
     //set top
-    elementPosition.top = _y;
+    elementPosition.top = _y - window.pageYOffset;
     //set left
-    elementPosition.left = _x;
+    elementPosition.left = _x - window.pageXOffset;
 
     return elementPosition;
   }
@@ -949,22 +987,22 @@
     return obj3;
   }
 
-  var introJs = function (targetElm) {
+  var introJs = function (targetElm, textData) {
     if (typeof (targetElm) === 'object') {
       //Ok, create a new instance
-      return new IntroJs(targetElm);
+      return new IntroJs(targetElm, textData);
 
     } else if (typeof (targetElm) === 'string') {
       //select the target element with query selector
       var targetElement = document.querySelector(targetElm);
 
       if (targetElement) {
-        return new IntroJs(targetElement);
+        return new IntroJs(targetElement, textData);
       } else {
         throw new Error('There is no element with given selector.');
       }
     } else {
-      return new IntroJs(document.body);
+      return new IntroJs(document.body, textData);
     }
   };
 
@@ -979,7 +1017,7 @@
   //Prototype
   introJs.fn = IntroJs.prototype = {
     clone: function () {
-      return new IntroJs(this);
+      return new IntroJs(this, _cloneObject(this._textData));
     },
     setOption: function(option, value) {
       this._options[option] = value;
@@ -1010,6 +1048,9 @@
     },
     getOverlay: function() {
       return this._targetElement.querySelector('.introjs-overlay');
+    },
+    getTextData: function() {
+      return this._textData;
     },
     exit: function() {
       _exitIntro.call(this, this._targetElement);
