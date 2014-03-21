@@ -32,7 +32,7 @@
 
       <div class="jumbotron">
         <h1 id="step1">Hook overlay actions</h1>
-        <p id="step4" class="lead">We're going to hook into the onClick event in the overlay: when you show IntroJS tooltips, clicking outside them (in the overlay) will trigger custom action code.</p>
+        <p id="step4" class="lead">We're going to set custom onExit and onComplete callbacks for this IntroJS instance: when you show IntroJS tooltips, clicking outside them (in the overlay) will trigger these callbacks, just as hitting the ESCAPE key or completing the IntroJS sequence (clicking the 'Done' button at the end) would do.</p>
         <a class="btn btn-large btn-success" href="javascript:void(0);" onclick="startIntro();">Show me how</a>
       </div>
 
@@ -96,7 +96,14 @@
                 intro: 'Get it, use it.'
               }
             ]
+          })
+          .oncomplete(function () {
+            alert('onComplete callback has been invoked');
+          })
+          .onexit(function () {
+            alert('onExit callback has been invoked');
           });
+
 
           intro.start();
       }

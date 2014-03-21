@@ -467,8 +467,7 @@
 
       var elementPosition = _getOffset(this._introItems[this._currentStep].element);
       //set new position to helper layer
-      helperLayer.setAttribute('style', 'position: fixed; ' +
-                                        'width: ' + (elementPosition.width  + 10)  + 'px; ' +
+      helperLayer.setAttribute('style', 'width: ' + (elementPosition.width  + 10)  + 'px; ' +
                                         'height:' + (elementPosition.height + 10)  + 'px; ' +
                                         'top:'    + (elementPosition.top    - 5)   + 'px;' +
                                         'left: '  + (elementPosition.left   - 5)   + 'px;');
@@ -748,7 +747,7 @@
       }
     } else if (this._introItems.length - 1 === this._currentStep && this._introItems.length > 1) {
       // last step
-      prevTooltipButton.className = 'introjs-button introjs-prevbutton' + (at_checkpoint ? ' introjs-hidden' : ''));
+      prevTooltipButton.className = 'introjs-button introjs-prevbutton' + (at_checkpoint ? ' introjs-hidden' : '');
       nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
       skipTooltipButton.innerHTML = this._options.doneLabel;
 
@@ -919,7 +918,7 @@
     targetElm.appendChild(overlayLayer);
 
     overlayLayer.onclick = function(e) {
-      if (self._options.exitOnOverlayClick == true) {
+      if (self._options.exitOnOverlayClick === true) {
         //check if any callback is defined
         if (self._introExitCallback != undefined) {
           self._introExitCallback.call(self, {
@@ -965,9 +964,9 @@
       element = element.offsetParent;
     }
     //set top
-    elementPosition.top = _y - window.pageYOffset;
+    elementPosition.top = _y;
     //set left
-    elementPosition.left = _x - window.pageXOffset;
+    elementPosition.left = _x;
 
     return elementPosition;
   }
@@ -1053,6 +1052,11 @@
       return this._textData;
     },
     exit: function() {
+      if (this._introExitCallback != undefined) {
+        this._introExitCallback.call(this, {
+          keyDownEvent: e
+        });
+      }
       _exitIntro.call(this, this._targetElement);
     },
     refresh: function() {
