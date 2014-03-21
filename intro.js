@@ -61,7 +61,9 @@
       /* {String|Array} Which are the current role(s) of the user? (We can serve different content based on user role.) */
       activeRoles: null,
       /* {Function} Wrap the intro text in a user specified template. Function call interface: function(roleAndText, index, collectedIntroTexts) */
-      textTemplateCallback: null
+      textTemplateCallback: null,
+      /* previousStep and prevButton are disabled at these checkpoints? */
+      checkpoints: []
     };
   }
 
@@ -288,6 +290,13 @@
     if (this._currentStep === 0) {
       return false;
     }
+	
+	// check for checkpoints
+	for (var i = 0; i < this._options.checkpoints.length; i++) {
+	  if (this._currentStep === this._options.checkpoints[i]) {
+	    return false;
+	  }
+	}
 
     var nextStep = this._introItems[--this._currentStep];
     if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
@@ -718,6 +727,13 @@
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
       if (this._options.focusOnNextDoneButtons) {
         nextTooltipButton.focus();
+      }
+    }
+
+    // show disabled prev button on checkpoints
+    for (var i = 0; i < this._options.checkpoints.length; i++) {
+      if (this._options.checkpoints[i] === this._currentStep) {
+        prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-disabled';
       }
     }
 
