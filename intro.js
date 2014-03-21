@@ -752,7 +752,7 @@
 
     var parentElm = targetElement.element.parentNode;
     while (parentElm != null) {
-      if (parentElm.tagName.toLowerCase() === 'body') break;
+      if (parentElm.tagName.toLowerCase() === 'body' || parentElm.tagName.toLowerCase() === 'html') break;
 
       //fix The Stacking Contenxt problem. 
       //More detail: https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Understanding_z_index/The_stacking_context
@@ -765,7 +765,9 @@
       parentElm = parentElm.parentNode;
     }
 
-    if (!_elementInViewport(targetElement.element) && this._options.scrollToElement === true) {
+    if (targetElement.element.tagName.toLowerCase() === 'body') {
+      window.scrollTo(0, 0); // scroll to top when highlighting the whole page
+    } else if (!_elementInViewport(targetElement.element) && this._options.scrollToElement === true) {
       var rect = targetElement.element.getBoundingClientRect(),
         winHeight = _getWinSize().height,
         top = rect.bottom - (rect.bottom - rect.top),
