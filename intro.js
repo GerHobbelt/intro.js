@@ -62,7 +62,7 @@
       activeRoles: null,
       /* {Function} Wrap the intro text in a user specified template. Function call interface: function(roleAndText, index, collectedIntroTexts) */
       textTemplateCallback: null,
-      /* previousStep and prevButton are disabled at these checkpoints? */
+      /* previousStep and prevButton are disabled at these checkpoints (checkpoint = step number)? */
       checkpoints: []
     };
   }
@@ -291,12 +291,12 @@
       return false;
     }
 	
-	// check for checkpoints
-	for (var i = 0; i < this._options.checkpoints.length; i++) {
-	  if (this._currentStep === this._options.checkpoints[i]) {
-	    return false;
+  	// check for checkpoints
+	  for (var i = 0; i < this._options.checkpoints.length; i++) {
+	    if (this._currentStep === this._options.checkpoints[i]) {
+	      return false;
+	    }
 	  }
-	}
 
     var nextStep = this._introItems[--this._currentStep];
     if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
@@ -688,6 +688,16 @@
       _placeTooltip.call(self, targetElement.element, tooltipLayer, arrowLayer);
     }
 
+    // show disabled prev button on checkpoints?
+    var at_checkpoint = false;
+    for (var i = 0; i < this._options.checkpoints.length; i++) {
+      if (this._options.checkpoints[i] === this._currentStep) {
+        at_checkpoint = true;
+        break;
+      }
+    }
+
+
     if (this._currentStep == 0 && this._introItems.length > 1) {
       // first step but not last
       prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
@@ -700,7 +710,7 @@
       }
     } else if (this._introItems.length - 1 === this._currentStep && this._introItems.length > 1) {
       // last step
-      prevTooltipButton.className = 'introjs-button introjs-prevbutton';
+      prevTooltipButton.className = 'introjs-button introjs-prevbutton' + (at_checkpoint ? ' introjs-hidden' : ''));
       nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
       skipTooltipButton.innerHTML = this._options.doneLabel;
 
@@ -720,20 +730,13 @@
       }
     } else {
       // some intermediate step
-      prevTooltipButton.className = 'introjs-button introjs-prevbutton';
+      prevTooltipButton.className = 'introjs-button introjs-prevbutton' + (at_checkpoint ? ' introjs-hidden' : '');
       nextTooltipButton.className = 'introjs-button introjs-nextbutton';
       skipTooltipButton.innerHTML = this._options.skipLabel;
 
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
       if (this._options.focusOnNextDoneButtons) {
         nextTooltipButton.focus();
-      }
-    }
-
-    // show disabled prev button on checkpoints
-    for (var i = 0; i < this._options.checkpoints.length; i++) {
-      if (this._options.checkpoints[i] === this._currentStep) {
-        prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-disabled';
       }
     }
 
