@@ -50,6 +50,8 @@
       showStepNumbers: true,
       /* Let user use keyboard to navigate the tour? */
       keyboardNavigation: true,
+      /* Always put focus on the next/done buttons at each step? */
+      focusOnNextDoneButtons: false,
       /* Show tour control buttons? */
       showButtons: true,
       /* Show tour bullets? */
@@ -682,20 +684,42 @@
       prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
       nextTooltipButton.className = 'introjs-button introjs-nextbutton';
       skipTooltipButton.innerHTML = this._options.skipLabel;
-    } else if (this._introItems.length - 1 == this._currentStep || this._introItems.length === 1) {
+
+      //Set focus on "next" button, so that hitting Enter always moves you onto the next step
+      if (this._options.focusOnNextDoneButtons) {
+        nextTooltipButton.focus();
+      }
+    } else if (this._introItems.length - 1 === this._currentStep && this._introItems.length > 1) {
       // last step
-      skipTooltipButton.innerHTML = this._options.doneLabel;
       prevTooltipButton.className = 'introjs-button introjs-prevbutton';
       nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
+      skipTooltipButton.innerHTML = this._options.doneLabel;
+
+      //Set focus on "next" button, so that hitting Enter always moves you onto the next step
+      if (this._options.focusOnNextDoneButtons) {
+        skipTooltipButton.focus();
+      }
+    } else if (this._introItems.length === 1) {
+      // the only step there is
+      prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
+      nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
+      skipTooltipButton.innerHTML = this._options.doneLabel;
+
+      //Set focus on "next" button, so that hitting Enter always moves you onto the next step
+      if (this._options.focusOnNextDoneButtons) {
+        skipTooltipButton.focus();
+      }
     } else {
       // some intermediate step
       prevTooltipButton.className = 'introjs-button introjs-prevbutton';
       nextTooltipButton.className = 'introjs-button introjs-nextbutton';
       skipTooltipButton.innerHTML = this._options.skipLabel;
-    }
 
-    //Set focus on "next" button, so that hitting Enter always moves you onto the next step
-    // nextTooltipButton.focus();
+      //Set focus on "next" button, so that hitting Enter always moves you onto the next step
+      if (this._options.focusOnNextDoneButtons) {
+        nextTooltipButton.focus();
+      }
+    }
 
     //add target element position style
     targetElement.element.className += ' introjs-showElement';
