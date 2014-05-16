@@ -880,7 +880,7 @@
     } else if (!_elementInViewport(targetElement.element) && this._options.scrollToElement === true) {
       var rect = targetElement.element.getBoundingClientRect(),
         winHeight = _getWinSize().height,
-        top = rect.bottom - (rect.bottom - rect.top),
+        top = rect.top,
         bottom = rect.bottom - winHeight;
 
       //Scroll up
