@@ -274,6 +274,15 @@ Aborted due to warnings.
   background: #999;
 }
 
+.introjsFloatingElement {
+  position: absolute;
+  height: 0;
+  width: 0;
+  left: 50%;
+  top: 50%;
+}
+
 .introjs-hidden {
     display: none;
 }
+

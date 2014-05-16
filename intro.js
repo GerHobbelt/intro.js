@@ -1,5 +1,5 @@
 /**
- * Intro.js v0.7.1
+ * Intro.js v0.8.0
  * https://github.com/usablica/intro.js
  * MIT licensed
  *
@@ -19,8 +19,8 @@
   }
 } (this, function (exports) {
   //Default config/variables
-  var VERSION = '0.7.1';
-      attrNames = {
+  var VERSION = '0.8.0';
+  var attrNames = {
         step: 'data-intro-step',
         text: 'data-intro-text',
         key: 'data-intro-key',
@@ -126,6 +126,21 @@
         if (typeof(currentItem.element) === 'string') {
           //grab the element with given selector from the page
           currentItem.element = document.querySelector(currentItem.element);
+        }
+
+        //intro without element
+        if (typeof(currentItem.element) === 'undefined' || currentItem.element == null) {
+          var floatingElementQuery = document.querySelector(".introjsFloatingElement");
+
+          if (floatingElementQuery == null) {
+            floatingElementQuery = document.createElement('div');
+            floatingElementQuery.className = 'introjsFloatingElement';
+
+            document.body.appendChild(floatingElementQuery);
+          }
+
+          currentItem.element  = floatingElementQuery;
+          currentItem.position = 'floating';
         }
 
         if (currentItem.element != null) {
@@ -261,7 +276,7 @@
    * @method _cloneObject
   */
   function _cloneObject(object) {
-      if (object == null || typeof (object) != 'object' || object.hasOwnProperty("nodeName") === true || typeof (object.nodeType) != 'undefined') {
+      if (object == null || typeof (object) != 'object' || typeof (object.nodeType) != 'undefined') {
           return object;
       }
       var temp = {};
@@ -291,6 +306,8 @@
    * @method _nextStep
    */
   function _nextStep() {
+    this._direction = 'forward';
+
     if (typeof (this._currentStep) === 'undefined') {
       this._currentStep = 0;
     } else {
@@ -324,6 +341,8 @@
    * @method _nextStep
    */
   function _previousStep() {
+    this._direction = 'backward';
+    
     if (this._currentStep === 0) {
       return false;
     }
@@ -353,10 +372,12 @@
   function _exitIntro(targetElement) {
     //remove overlay layer from the page
     var overlayLayer = (this._options.maskTarget || targetElement).querySelector('.introjs-overlay');
+    
     //return if intro already completed or skipped
     if (overlayLayer == null) {
       return;
     }
+
     //for fade-out animation
     overlayLayer.style.opacity = 0;
     setTimeout(function () {
@@ -364,11 +385,19 @@
         overlayLayer.parentNode.removeChild(overlayLayer);
       }
     }, 500);
+
     //remove all helper layers
     var helperLayer = targetElement.querySelector('.introjs-helperLayer');
     if (helperLayer) {
       helperLayer.parentNode.removeChild(helperLayer);
     }
+
+    //remove intro floating element
+    var floatingElement = document.querySelector('.introjsFloatingElement');
+    if (floatingElement) {
+      floatingElement.parentNode.removeChild(floatingElement);
+    }
+
     //remove `introjs-showElement` class from the element
     var showElement = document.querySelector('.introjs-showElement');
     if (showElement) {
@@ -382,12 +411,14 @@
         fixParents[i].className = fixParents[i].className.replace(/introjs-fixParent/g, '').replace(/^\s+|\s+$/g, '');
       };
     }
+
     //clean listeners
     if (window.removeEventListener) {
       window.removeEventListener('keydown', this._onKeyDown, true);
     } else if (document.detachEvent) { //IE
       document.detachEvent('onkeydown', this._onKeyDown);
     }
+    
     //set the step to zero
     this._currentStep = undefined;
   }
@@ -401,12 +432,21 @@
    * @param {Object} tooltipLayer
    * @param {Object} arrowLayer
    */
-  function _placeTooltip(targetElement, tooltipLayer, arrowLayer) {
+  function _placeTooltip(targetElement, tooltipLayer, arrowLayer, helperNumberLayer) {
     //reset the old style
-    tooltipLayer.style.top     = null;
-    tooltipLayer.style.right   = null;
-    tooltipLayer.style.bottom  = null;
-    tooltipLayer.style.left    = null;
+    tooltipLayer.style.top        = null;
+    tooltipLayer.style.right      = null;
+    tooltipLayer.style.bottom     = null;
+    tooltipLayer.style.left       = null;
+    tooltipLayer.style.marginLeft = null;
+    tooltipLayer.style.marginTop  = null;
+
+    arrowLayer.style.display = 'inherit';
+
+    if (typeof(helperNumberLayer) != 'undefined' && helperNumberLayer != null) {
+      helperNumberLayer.style.top  = null;
+      helperNumberLayer.style.left = null;
+    }
 
     //prevent error when `this._currentStep` is undefined
     if (!this._introItems[this._currentStep]) return;
@@ -444,6 +484,23 @@
         tooltipLayer.style.right = (_getOffset(targetElement).width + 20) + 'px';
         arrowLayer.className = 'introjs-arrow right';
         break;
+      case 'floating':
+        arrowLayer.style.display = 'none';
+
+        //we have to adjust the top and left of layer manually for intro items without element{
+        var tooltipOffset = _getOffset(tooltipLayer);
+
+        tooltipLayer.style.left   = '50%';
+        tooltipLayer.style.top    = '50%';
+        tooltipLayer.style.marginLeft = '-' + (tooltipOffset.width / 2)  + 'px';
+        tooltipLayer.style.marginTop  = '-' + (tooltipOffset.height / 2) + 'px';
+
+        if (typeof(helperNumberLayer) != 'undefined' && helperNumberLayer != null) {
+          helperNumberLayer.style.left = '-' + ((tooltipOffset.width / 2) + 18) + 'px';
+          helperNumberLayer.style.top  = '-' + ((tooltipOffset.height / 2) + 18) + 'px';
+        }
+
+        break;
       case 'bottom':
       // Bottom going to follow the default behavior
       default:
@@ -465,10 +522,17 @@
       //prevent error when `this._currentStep` in undefined
       if (!this._introItems[this._currentStep]) return;
 
-      var elementPosition = _getOffset(this._introItems[this._currentStep].element);
+      var currentElement  = this._introItems[this._currentStep];
+      var elementPosition = _getOffset(currentElement.element);
+
+      var widthHeightPadding = 10;
+      if (currentElement.position == 'floating') {
+        widthHeightPadding = 0;
+      }
+
       //set new position to helper layer
-      helperLayer.setAttribute('style', 'width: ' + (elementPosition.width  + 10)  + 'px; ' +
-                                        'height:' + (elementPosition.height + 10)  + 'px; ' +
+      helperLayer.setAttribute('style', 'width: ' + (elementPosition.width  + widthHeightPadding)  + 'px; ' +
+                                        'height:' + (elementPosition.height + widthHeightPadding)  + 'px; ' +
                                         'top:'    + (elementPosition.top    - 5)   + 'px;' +
                                         'left: '  + (elementPosition.left   - 5)   + 'px;');
     }
@@ -559,6 +623,14 @@
       //hide the tooltip
       oldtooltipContainer.style.opacity = 0;
 
+      if (oldHelperNumberLayer != null) {
+        var lastIntroItem = this._introItems[(targetElement.step - 2 >= 0 ? targetElement.step - 2 : 0)];
+
+        if (lastIntroItem != null && (this._direction == 'forward' && lastIntroItem.position == 'floating') || (this._direction == 'backward' && targetElement.position == 'floating')) {
+          oldHelperNumberLayer.style.opacity = 0;
+        }
+      }
+
       //set new position to helper layer
       _setHelperLayerPosition.call(self, oldHelperLayer);
 
@@ -588,7 +660,7 @@
         //set current tooltip text
         oldtooltipLayer.innerHTML = _renderIntroText.call(self, targetElement);
         //set the tooltip position
-        _placeTooltip.call(self, targetElement.element, oldtooltipContainer, oldArrowLayer);
+        _placeTooltip.call(self, targetElement.element, oldtooltipContainer, oldArrowLayer, oldHelperNumberLayer);
 
         //change active bullet
         oldHelperLayer.querySelector('.introjs-bullets li > a.active').className = '';
@@ -596,6 +668,7 @@
 
         //show the tooltip
         oldtooltipContainer.style.opacity = 1;
+        oldHelperNumberLayer.style.opacity = 1;
       }, 350);
     } else {
       var helperLayer       = document.createElement('div'),
@@ -722,7 +795,7 @@
       tooltipLayer.appendChild(buttonsLayer);
 
       //set proper position
-      _placeTooltip.call(self, targetElement.element, tooltipLayer, arrowLayer);
+      _placeTooltip.call(self, targetElement.element, tooltipLayer, arrowLayer, helperNumberLayer);
     }
 
     // show disabled prev button on checkpoints?

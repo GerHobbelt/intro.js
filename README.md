@@ -2,6 +2,7 @@
 
 > Better introductions for websites and features with a step-by-step guide for your projects.
 
+
 ## Where to get
 You can obtain your local copy of Intro.js from:
 
@@ -137,6 +138,7 @@ introJs().start().nextStep();
 ````
 
 -----
+
 
 ###introJs.previousStep()
 
@@ -410,6 +412,7 @@ Now you can run this command to minify all static resources:
 
     make build
 
+
 ## Instant IntroJs
 
 Want to learn faster and easier? Here we have **Instant IntroJs**, Packt Publishing.  
@@ -422,14 +425,19 @@ Want to learn faster and easier? Here we have **Instant IntroJs**, Packt Publish
   <a target='_blank' href="http://www.packtpub.com/create-useful-introductions-for-websites-and-applications-with-introjs-library/book">Buy and Download</a>
 </p>
 
+
 ## Roadmap
 
-- Add introduction without focusing on elements
 - Fix problems with `position: fixed` and other positions
 - Provide more examples
 
 
 ## Release History
+
+ * **v0.8.0** - 2014-03-25
+   - Ability to define introductions without focusing on elements
+   - Fix Internet Explorer 8.0 issue
+   - Add `_direction` property
 
  * **v0.7.1** - 2014-03-11
    - Fix "Too much recursion" issue with Firefox and Internet Explorer.
