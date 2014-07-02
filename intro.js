@@ -427,6 +427,11 @@
         tooltipLayer.style.left = (_getOffset(targetElement).width + 20) + 'px';
         arrowLayer.className = 'introjs-arrow left';
         break;
+      case 'right-bottom-aligned':
+        tooltipLayer.style.left = (_getOffset(targetElement).width + 30) + 'px';
+        tooltipLayer.style.bottom = '0px';
+        arrowLayer.className = 'introjs-arrow left-bottom';
+        break;
       case 'left':
         if (this._options.showStepNumbers == true) {
           tooltipLayer.style.top = '15px';
@@ -435,8 +440,13 @@
         arrowLayer.className = 'introjs-arrow right';
         break;
       case 'left-bottom-aligned':
-        arrowLayer.className      = 'introjs-arrow right-bottom';
-        tooltipLayer.style.right = (_getOffset(targetElement).width + 30) + 'px';
+        if (this._options.showStepNumbers == true) {
+          tooltipLayer.style.right = (_getOffset(targetElement).width + 30) + 'px';
+        }
+        else {
+          tooltipLayer.style.right = (_getOffset(targetElement).width + 20) + 'px';
+        }
+        arrowLayer.className = 'introjs-arrow right-bottom';
         tooltipLayer.style.bottom = '0px';
         break;
       case 'floating':
