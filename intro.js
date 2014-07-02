@@ -428,7 +428,7 @@
         arrowLayer.className = 'introjs-arrow left';
         break;
       case 'right-bottom-aligned':
-        tooltipLayer.style.left = (_getOffset(targetElement).width + 30) + 'px';
+        tooltipLayer.style.left = (_getOffset(targetElement).width + 20) + 'px';
         tooltipLayer.style.bottom = '0px';
         arrowLayer.className = 'introjs-arrow left-bottom';
         break;
