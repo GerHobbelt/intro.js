@@ -118,6 +118,14 @@ tr.introjs-showElement > th {
   border-bottom-color:transparent;
   border-left-color:white;
 }
+.introjs-arrow.right-bottom {
+  right: -10px;
+  bottom: 10px;
+  border-top-color:transparent;
+  border-right-color:transparent;
+  border-bottom-color:transparent;
+  border-left-color:white;
+}
 .introjs-arrow.bottom {
   bottom: -10px;
   border-top-color:white;
