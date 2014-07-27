@@ -24,6 +24,9 @@
         step: 'data-intro-step',
         text: 'data-intro-text',
         key: 'data-intro-key',
+        skiplabel: 'data-intro-skiplabel',
+        prevlabel: 'data-intro-prevlabel',
+        nextlabel: 'data-intro-nextlebel',
         tooltip: 'data-intro-tooltipClass',
         position: 'data-intro-position',
         stepnumber: 'data-intro-stepnumber'
@@ -134,10 +137,10 @@
         }
 
         //intro without element
-        if (typeof currentItem.element === 'undefined' || currentItem.element === null) {
+        if (!currentItem.element) {
           var floatingElementQuery = document.querySelector('.introjsFloatingElement');
 
-          if (floatingElementQuery == null) {
+          if (!floatingElementQuery) {
             floatingElementQuery = document.createElement('div');
             floatingElementQuery.className = 'introjsFloatingElement';
 
@@ -148,7 +151,7 @@
           currentItem.position = 'floating';
         }
 
-        if (currentItem.element != null) {
+        if (currentItem.element) {
           introItems.push(currentItem);
         }
       }
@@ -171,10 +174,7 @@
         if (step > 0  && !isKeyDuplicate(currentElement)) {
           introItems[step - 1] = {
             element: currentElement,
-            intro: _getIntroText.call(self, currentElement),
-            step: parseInt(currentElement.getAttribute(attrNames.step), 10),
-            tooltipClass: currentElement.getAttribute(attrNames.tooltipClass),
-            position: currentElement.getAttribute(attrNames.position) || this._options.tooltipPosition
+            step: parseInt(currentElement.getAttribute(attrNames.step), 10)
           };
         }
       }
@@ -196,10 +196,7 @@
 
           introItems[nextStep] = {
             element: currentElement,
-            intro: _getIntroText.call(self, currentElement),
-            step: nextStep + 1,
-            tooltipClass: currentElement.getAttribute(attrNames.tooltipClass),
-            position: currentElement.getAttribute(attrNames.position) || this._options.tooltipPosition
+            step: nextStep + 1
           };
         }
       }
@@ -208,7 +205,9 @@
     //removing undefined/null elements
     var tempIntroItems = [];
     for (var z = 0; z < introItems.length; z++) {
-      introItems[z] && tempIntroItems.push(introItems[z]);  // copy non-empty values to the end of the array
+      if (introItems[z]) {
+        tempIntroItems.push(introItems[z]);  // copy non-empty values to the end of the array
+      }
     }
 
     introItems = tempIntroItems;
@@ -217,6 +216,22 @@
     introItems.sort(function (a, b) {
       return a.step - b.step;
     });
+
+    //Augment all the items, now that we know who they are and how many:
+    for (i = 0, elmsLength = introItems.length; i < elmsLength; i++) {
+      currentItem = introItems[i];
+      currentElement = currentItem.element;
+
+      var extraData = {
+        intro: _getIntroText.call(self, currentElement),
+        tooltipClass: currentElement.getAttribute(attrNames.tooltipClass),
+        position: currentElement.getAttribute(attrNames.position) || this._options.tooltipPosition,
+        prevLabel: currentElement.getAttribute(attrNames.prevLabel) || this._options.prevLabel,
+        nextLabel: currentElement.getAttribute(attrNames.nextLabel) || this._options.nextLabel,
+        skipLabel: currentElement.getAttribute(attrNames.skipLabel) || (i + 1 < elmsLength ? this._options.skipLabel : this._options.doneLabel)
+      };
+      introItems[i] = _mergeOptions(extraData, currentItem);
+    }
 
     //set it to the introJs object
     self._introItems = introItems;
@@ -381,7 +396,7 @@
       return;
     }
 
-    if (self._options.overlayOpacity === 0) {
+    if (this._options.overlayOpacity === 0) {
         overlayLayer.parentNode.removeChild(overlayLayer);
     } else {
         //for fade-out animation
@@ -683,6 +698,12 @@
         }
       }
 
+      //set current nextLabel text
+      nextTooltipButton.innerHTML = targetElement.nextLabel;
+
+      //set current skipLabel text
+      skipTooltipButton.innerHTML = targetElement.skipLabel;
+
       //set new position to helper layer
       _setHelperLayerPosition.call(self, oldHelperLayer);
 
@@ -807,7 +828,7 @@
       };
 
       nextTooltipButton.href = 'javascript:void(0);';
-      nextTooltipButton.innerHTML = this._options.nextLabel;
+      nextTooltipButton.innerHTML = self._introItems[self._currentStep].nextLabel;
 
       //previous button
       prevTooltipButton = document.createElement('a');
@@ -819,13 +840,13 @@
       };
 
       prevTooltipButton.href = 'javascript:void(0);';
-      prevTooltipButton.innerHTML = this._options.prevLabel;
+      prevTooltipButton.innerHTML = self._introItems[self._currentStep].prevLabel;
 
       //skip button
       skipTooltipButton = document.createElement('a');
       skipTooltipButton.className = 'introjs-button introjs-skipbutton';
       skipTooltipButton.href = 'javascript:void(0);';
-      skipTooltipButton.innerHTML = this._options.skipLabel;
+      skipTooltipButton.innerHTML = self._introItems[self._currentStep].skipLabel;
 
       skipTooltipButton.onclick = function(e) {
         if (self._introItems.length - 1 === self._currentStep && typeof self._introCompleteCallback === 'function') {
@@ -870,7 +891,7 @@
       // first step but not last
       prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
       nextTooltipButton.className = 'introjs-button introjs-only-nextbutton';
-      skipTooltipButton.innerHTML = this._options.skipLabel;
+      skipTooltipButton.innerHTML = self._introItems[self._currentStep].skipLabel;
 
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
       if (this._options.focusOnNextDoneButtons) {
@@ -900,7 +921,7 @@
       // some intermediate step
       prevTooltipButton.className = 'introjs-button' + (at_checkpoint ? ' introjs-prevbutton introjs-hidden' : ' introjs-prevbutton');
       nextTooltipButton.className = 'introjs-button' + (at_checkpoint ? ' introjs-only-nextbutton' : ' introjs-nextbutton');
-      skipTooltipButton.innerHTML = this._options.skipLabel;
+      skipTooltipButton.innerHTML = self._introItems[self._currentStep].skipLabel;
 
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
       if (this._options.focusOnNextDoneButtons) {
@@ -1124,10 +1145,14 @@
     var obj3 = {};
     var attrname;
     for (attrname in obj1) { 
-      obj3[attrname] = obj1[attrname]; 
+      if (obj1.hasOwnProperty(attrname)) {
+        obj3[attrname] = obj1[attrname]; 
+      }
     }
-    for (attrname in obj2) { 
-      obj3[attrname] = obj2[attrname]; 
+    for (attrname in obj2) {
+      if (obj2.hasOwnProperty(attrname)) {
+        obj3[attrname] = obj2[attrname]; 
+      }
     }
     return obj3;
   }

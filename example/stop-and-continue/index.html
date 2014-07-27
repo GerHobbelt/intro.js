@@ -13,6 +13,13 @@
 
     <!-- Add IntroJs styles -->
     <link href="../../introjs.css" rel="stylesheet">
+    <style>
+.btn-info.active
+{
+  background-color: #DE5B5B;
+  border-color: #DA4646;
+}    
+    </style>
   </head>
 
   <body>
@@ -36,13 +43,13 @@
         <a class="btn btn-large btn-success" href="javascript:void(0);" onclick="startIntro();">Show me how</a>
         <hr>
         <p>Pick a user role:</p>
-        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole(null);">No role</a>
-        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole('user');">User</a>
-        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole('tester');">Tester</a>
-        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole('admin');">Admin</a>
+        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole(this, null);">No role</a>
+        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole(this, 'user');">User</a>
+        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole(this, 'tester');">Tester</a>
+        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole(this, 'admin');">Admin</a>
         <hr>
-        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole(['user', 'tester']);">User &amp; Tester both!</a>
-        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole(['user', 'tester', 'admin']);">All these roles!</a>
+        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole(this, ['user', 'tester']);">User &amp; Tester both!</a>
+        <a class="btn btn-large btn-info" href="javascript:void(0);" onclick="setRole(this, ['user', 'tester', 'admin']);">All these roles!</a>
       </div>
 
       <hr>
@@ -129,7 +136,14 @@
         intro.start();
       }
 
-      function setRole(roles) {
+      function setRole(currentElement, roles) {
+        var els = document.querySelectorAll('.btn-info');
+        for (var i = 0; i < els.length; i++) {
+          var el = els[i];
+          el.classList.remove('active');
+        }
+        currentElement.classList.add('active');
+
         if (!intro) {
           intro = introJs();
         }
