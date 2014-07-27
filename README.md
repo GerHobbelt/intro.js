@@ -4,13 +4,16 @@
 
 
 ## Where to get
+
 You can obtain your local copy of Intro.js from:
 
 **1)** This github repository, using ```git clone https://github.com/usablica/intro.js.git```
 
 **2)** Using bower ```bower install intro.js --save```
 
-**3)** Download it from CDN ([1](http://www.jsdelivr.com/#!intro.js), [2](http://cdnjs.com/#introjs))
+**3)** Using npm ```npm install intro.js --save```
+
+**4)** Download it from CDN ([1](http://www.jsdelivr.com/#!intro.js), [2](http://cdnjs.com/#introjs))
 
 
 ## How to use
@@ -56,6 +59,7 @@ In order to use templates, all you need to do is appending the template styleshe
 <!-- Add Nazanin template -->
 <link href="../../themes/introjs-nazanin.css" rel="stylesheet">
 ```
+
 
 ## API
 
