@@ -501,7 +501,7 @@
         arrowLayer.className = 'introjs-arrow right';
         break;
       case 'left-bottom-aligned':
-        if (this._options.showStepNumbers == true) {
+        if (this._options.showStepNumbers) {
           tooltipLayer.style.right = (_getOffset(targetElement).width + 30) + 'px';
         }
         else {
@@ -743,7 +743,7 @@
 
       bulletsLayer.className = 'introjs-bullets';
 
-      if (this._options.showBullets === false) {
+      if (!this._options.showBullets) {
         bulletsLayer.style.display = 'none';
       }
 
@@ -774,7 +774,7 @@
       bulletsLayer.appendChild(ulContainer);
 
       buttonsLayer.className = 'introjs-tooltipbuttons';
-      if (this._options.showButtons === false) {
+      if (!this._options.showButtons) {
         buttonsLayer.style.display = 'none';
       }
 
@@ -931,7 +931,7 @@
 
     if (targetElement.element.tagName.toLowerCase() === 'body') {
       window.scrollTo(0, 0); // scroll to top when highlighting the whole page
-    } else if (!_elementInViewport(targetElement.element) && this._options.scrollToElement === true) {
+    } else if (!_elementInViewport(targetElement.element) && this._options.scrollToElement) {
       var rect = targetElement.element.getBoundingClientRect(),
         winHeight = _getWinSize().height,
         top = rect.top,
