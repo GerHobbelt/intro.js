@@ -981,7 +981,7 @@
 
     if (targetElement.element.tagName.toLowerCase() === 'body') {
       window.scrollTo(0, 0); // scroll to top when highlighting the whole page
-    } else if (!_elementInViewport(targetElement.element) && this._options.scrollToElement) {
+    } else if (/* !_elementInViewport(targetElement.element)) && */ this._options.scrollToElement) {
       var rect = targetElement.element.getBoundingClientRect(),
         winHeight = _getWinSize().height,
         top = rect.top,
@@ -989,11 +989,11 @@
 
       //Scroll up
       if (top < 0 || targetElement.element.clientHeight > winHeight) {
-        window.scrollBy(0, top - 30); // 30px padding from edge to look nice
+        window.scrollBy(0, Math.round(top - 30)); // 30px padding from edge to look nice
 
       //Scroll down
       } else {
-        window.scrollBy(0, bottom + 100); // 70px + 30px padding from edge to look nice
+        window.scrollBy(0, Math.round(bottom + 100)); // 70px + 30px padding from edge to look nice
       }
     }
 
