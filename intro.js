@@ -342,17 +342,17 @@
    */
   function _previousStep() {
     this._direction = 'backward';
-    
+
     if (this._currentStep === 0) {
       return false;
     }
-	
-  	// check for checkpoints
-	  for (var i = 0; i < this._options.checkpoints.length; i++) {
-	    if (this._currentStep === this._options.checkpoints[i]) {
-	      return false;
-	    }
-	  }
+
+    // check for checkpoints
+    for (var i = 0; i < this._options.checkpoints.length; i++) {
+      if (this._currentStep === this._options.checkpoints[i]) {
+        return false;
+      }
+    }
 
     var nextStep = this._introItems[--this._currentStep];
     if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
@@ -372,7 +372,7 @@
   function _exitIntro(targetElement) {
     //remove overlay layer from the page
     var overlayLayer = (this._options.maskTarget || targetElement).querySelector('.introjs-overlay');
-    
+
     //return if intro already completed or skipped
     if (overlayLayer == null) {
       return;
@@ -418,7 +418,7 @@
     } else if (document.detachEvent) { //IE
       document.detachEvent('onkeydown', this._onKeyDown);
     }
-    
+
     //set the step to zero
     this._currentStep = undefined;
   }
@@ -478,7 +478,7 @@
         arrowLayer.className = 'introjs-arrow left';
         break;
       case 'left':
-        if (this._options.showStepNumbers == true) {  
+        if (this._options.showStepNumbers == true) {
           tooltipLayer.style.top = '15px';
         }
         tooltipLayer.style.right = (_getOffset(targetElement).width + 20) + 'px';
@@ -499,7 +499,6 @@
           helperNumberLayer.style.left = '-' + ((tooltipOffset.width / 2) + 18) + 'px';
           helperNumberLayer.style.top  = '-' + ((tooltipOffset.height / 2) + 18) + 'px';
         }
-
         break;
       case 'bottom':
       // Bottom going to follow the default behavior
@@ -864,14 +863,14 @@
     while (parentElm != null) {
       if (parentElm.tagName.toLowerCase() === 'body' || parentElm.tagName.toLowerCase() === 'html') break;
 
-      //fix The Stacking Contenxt problem. 
+      //fix The Stacking Contenxt problem.
       //More detail: https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Understanding_z_index/The_stacking_context
       var zIndex = _getPropValue(parentElm, 'z-index');
       var opacity = parseFloat(_getPropValue(parentElm, 'opacity'));
       if (/[0-9]+/.test(zIndex) || opacity < 1) {
         parentElm.className += ' introjs-fixParent';
       }
-    
+
       parentElm = parentElm.parentNode;
     }
 
@@ -892,7 +891,7 @@
         window.scrollBy(0, bottom + 100); // 70px + 30px padding from edge to look nice
       }
     }
-    
+
     if (typeof (this._introAfterChangeCallback) !== 'undefined') {
         this._introAfterChangeCallback.call(this, targetElement.element);
     }
