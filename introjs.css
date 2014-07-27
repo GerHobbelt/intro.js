@@ -184,6 +184,7 @@ tr.introjs-showElement > th {
   border-color: #bcbcbc;
   text-decoration: none;
   box-shadow: 0 1px 1px #e3e3e3;
+  z-index: 1;    /* make sure the button is entirely on top; prev/next have minimal overlap to share their border so that's where we need this */
 }
 
 .introjs-button:focus,
@@ -209,6 +210,7 @@ tr.introjs-showElement > th {
   -webkit-border-radius: 0.2em 0 0 0.2em;
   -moz-border-radius: 0.2em 0 0 0.2em;
   border-radius: 0.2em 0 0 0.2em;
+  margin-right: -1px;
 }
 
 .introjs-nextbutton {
@@ -217,16 +219,11 @@ tr.introjs-showElement > th {
   border-radius: 0 0.2em 0.2em 0;
 }
 
-.introjs-only-prevbutton {
-  -webkit-border-radius: 0 0.2em 0.2em 0;
-  -moz-border-radius: 0 0.2em 0.2em 0;
-  border-radius: 0 0.2em 0.2em 0;
-}
-
+.introjs-only-prevbutton,
 .introjs-only-nextbutton {
-  -webkit-border-radius: 0 0.2em 0.2em 0;
-  -moz-border-radius: 0 0.2em 0.2em 0;
-  border-radius: 0 0.2em 0.2em 0;
+  -webkit-border-radius: 0.2em;
+  -moz-border-radius: 0.2em;
+  border-radius: 0.2em;
 }
 
 .introjs-disabled, .introjs-disabled:hover, .introjs-disabled:focus {

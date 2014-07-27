@@ -641,6 +641,9 @@
       oldtooltipLayer      = oldHelperLayer.querySelector('.introjs-tooltiptext');
       oldArrowLayer        = oldHelperLayer.querySelector('.introjs-arrow');
       oldtooltipContainer  = oldHelperLayer.querySelector('.introjs-tooltip');
+      skipTooltipButton    = oldHelperLayer.querySelector('.introjs-skipbutton');
+      prevTooltipButton    = oldHelperLayer.querySelector('.introjs-prevbutton, .introjs-only-prevbutton');
+      nextTooltipButton    = oldHelperLayer.querySelector('.introjs-nextbutton, .introjs-only-nextbutton');
 
       //hide the tooltip
       oldtooltipContainer.style.opacity = 0;
@@ -868,8 +871,8 @@
       }
     } else {
       // some intermediate step
-      prevTooltipButton.className = 'introjs-button' + (at_checkpoint ? 'introjs-prevbutton introjs-hidden' : 'introjs-prevbutton');
-      nextTooltipButton.className = 'introjs-button' + (at_checkpoint ? 'introjs-only-nextbutton' : 'introjs-nextbutton');
+      prevTooltipButton.className = 'introjs-button' + (at_checkpoint ? ' introjs-prevbutton introjs-hidden' : ' introjs-prevbutton');
+      nextTooltipButton.className = 'introjs-button' + (at_checkpoint ? ' introjs-only-nextbutton' : ' introjs-nextbutton');
       skipTooltipButton.innerHTML = this._options.skipLabel;
 
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
