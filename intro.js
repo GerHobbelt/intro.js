@@ -736,7 +736,7 @@
 
         anchorLink.onclick = onAnchorLink;
 
-        if (i === 0) {
+        if (i === (targetElement.step - 1)) {
           anchorLink.className = 'active';
         }
 
