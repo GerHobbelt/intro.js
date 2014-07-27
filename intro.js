@@ -135,7 +135,7 @@
 
         //intro without element
         if (typeof currentItem.element === 'undefined' || currentItem.element === null) {
-          var floatingElementQuery = document.querySelector(".introjsFloatingElement");
+          var floatingElementQuery = document.querySelector('.introjsFloatingElement');
 
           if (floatingElementQuery == null) {
             floatingElementQuery = document.createElement('div');
@@ -226,9 +226,6 @@
       //then, start the show
       _nextStep.call(self);
 
-      var skipButton     = targetElm.querySelector('.introjs-skipbutton'),
-          nextStepButton = targetElm.querySelector('.introjs-nextbutton');
-
       self._onKeyDown = function(e) {
         if (e.keyCode === 27 && self._options.exitOnEsc) {
           //escape key pressed
@@ -264,13 +261,13 @@
           window.addEventListener('keydown', self._onKeyDown, true);
         }
         //for window resize
-        window.addEventListener("resize", self._onResize, true);
+        window.addEventListener('resize', self._onResize, true);
       } else if (document.attachEvent) { //IE
         if (this._options.keyboardNavigation) {
           document.attachEvent('onkeydown', self._onKeyDown);
         }
         //for window resize
-        document.attachEvent("onresize", self._onResize);
+        document.attachEvent('onresize', self._onResize);
       }
     }
     return false;
@@ -471,9 +468,6 @@
     }
 
     tooltipLayer.className = ('introjs-tooltip ' + tooltipCssClass).replace(/^\s+|\s+$/g, '');
-
-    //custom css class for tooltip boxes
-    var tooltipCssClass = this._options.tooltipClass;
 
     currentTooltipPosition = this._introItems[this._currentStep].position;
     switch (currentTooltipPosition) {
@@ -845,7 +839,7 @@
     if (this._currentStep === 0 && this._introItems.length > 1) {
       // first step but not last
       prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
-      nextTooltipButton.className = 'introjs-button introjs-nextbutton';
+      nextTooltipButton.className = 'introjs-button introjs-only-nextbutton';
       skipTooltipButton.innerHTML = this._options.skipLabel;
 
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
@@ -854,7 +848,7 @@
       }
     } else if (this._introItems.length - 1 === this._currentStep && this._introItems.length > 1) {
       // last step
-      prevTooltipButton.className = 'introjs-button introjs-prevbutton' + (at_checkpoint ? ' introjs-hidden' : '');
+      prevTooltipButton.className = 'introjs-button introjs-only-prevbutton' + (at_checkpoint ? ' introjs-hidden' : '');
       nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
       skipTooltipButton.innerHTML = this._options.doneLabel;
 
@@ -874,8 +868,8 @@
       }
     } else {
       // some intermediate step
-      prevTooltipButton.className = 'introjs-button introjs-prevbutton' + (at_checkpoint ? ' introjs-hidden' : '');
-      nextTooltipButton.className = 'introjs-button introjs-nextbutton';
+      prevTooltipButton.className = 'introjs-button' + (at_checkpoint ? 'introjs-prevbutton introjs-hidden' : 'introjs-prevbutton');
+      nextTooltipButton.className = 'introjs-button' + (at_checkpoint ? 'introjs-only-nextbutton' : 'introjs-nextbutton');
       skipTooltipButton.innerHTML = this._options.skipLabel;
 
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
@@ -898,7 +892,7 @@
     while (parentElm != null) {
       if (parentElm.tagName.toLowerCase() === 'body' || parentElm.tagName.toLowerCase() === 'html') break;
 
-      //fix The Stacking Contenxt problem.
+      //fix The Stacking Context problem.
       //More detail: https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Understanding_z_index/The_stacking_context
       var zIndex = _getPropValue(parentElm, 'z-index');
       var opacity = parseFloat(_getPropValue(parentElm, 'opacity'));
@@ -967,7 +961,7 @@
    * @returns {Object} width and height attributes
    */
   function _getWinSize() {
-    if (window.innerWidth != undefined) {
+    if (window.innerWidth) {
       return { 
         width: window.innerWidth, 
         height: window.innerHeight 
@@ -991,12 +985,13 @@
    */
   function _elementInViewport(el) {
     var rect = el.getBoundingClientRect();
+    var winsize = _getWinSize();
 
     return (
       rect.top >= 0 &&
       rect.left >= 0 &&
-      (rect.bottom + 80) <= window.innerHeight && // add 80 to get the text right
-      rect.right <= window.innerWidth
+      (rect.bottom + 80) <= winsize.height && // add 80 to get the text right
+      rect.right <= winsize.width
     );
   }
 
@@ -1093,10 +1088,15 @@
    * @param obj2
    * @returns obj3 a new object based on obj1 and obj2
    */
-  function _mergeOptions(obj1,obj2) {
+  function _mergeOptions(obj1, obj2) {
     var obj3 = {};
-    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-    for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+    var attrname;
+    for (attrname in obj1) { 
+      obj3[attrname] = obj1[attrname]; 
+    }
+    for (attrname in obj2) { 
+      obj3[attrname] = obj2[attrname]; 
+    }
     return obj3;
   }
 

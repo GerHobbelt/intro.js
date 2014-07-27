@@ -200,7 +200,7 @@ module.exports = function (grunt) {
   grunt.registerTask('dist-js', ['copy:js', 'uglify']);
 
   // CSS distribution task.
-  grunt.registerTask('dist-css', ['copy:css', 'cssmin', 'csscomb', 'usebanner']);
+  grunt.registerTask('dist-css', ['copy:css', 'cssmin', /*'csscomb', */ 'usebanner']);
 
   // Full distribution task.
   grunt.registerTask('dist', ['clean', 'dist-css', 'dist-js']);

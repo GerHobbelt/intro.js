@@ -8,3 +8,6 @@
 # Node stuff
 node_modules
 
+# dist output directory
+dist/
+

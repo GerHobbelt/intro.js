@@ -1,31 +1,3 @@
-/*
-Running "csslint:src" (csslint) task
-Linting introjs.css ...ERROR
-[L14:C3]
-Duplicate property 'filter' found. Duplicate properties must appear one after the other. (duplicate-properties)
-[L144:C3]
-margin can't be used with display: inline. Certain properties shouldn't be used with certain display property values. (display-property-grouping)
-[L166:C3]
-Duplicate property '*display' found. Duplicate properties must appear one after the other. (duplicate-properties)
-[L166:C3]
-Property with star prefix found. Checks for the star property hack (targets IE6/7) (star-property-hack)
-[L167:C3]
-margin-top can't be used with display: inline. Certain properties shouldn't be used with certain display property values. (display-property-grouping)
-[L173:C15]
-Values of 0 shouldn't have units specified. You don't need to specify units when a value is 0. (zero-units)
-[L237:C3]
-Standard property 'border-radius' should come after vendor-prefixed property '-moz-border-radius'. When using a vendor-prefixed property, make sure to include t
-he standard one. (vendor-prefix)
-[L238:C3]
-Standard property 'border-radius' should come after vendor-prefixed property '-webkit-border-radius'. When using a vendor-prefixed property, make sure to includ
-e the standard one. (vendor-prefix)
-[L244:C24]
-Element (a.active) is overqualified, just use .active without element name. Don't use classes or IDs with elements (a.foo or a#foo). (overqualified-elements)
-Warning: Task "csslint:src" failed. Use --force to continue.
-
-Aborted due to warnings.
-*/
-
 .introjs-overlay {
   position: absolute;
   z-index: 999999;
@@ -37,9 +9,6 @@ Aborted due to warnings.
   background: -o-radial-gradient(center,ellipse cover,rgba(0,0,0,0.4) 0,rgba(0,0,0,0.9) 100%);
   background: -ms-radial-gradient(center,ellipse cover,rgba(0,0,0,0.4) 0,rgba(0,0,0,0.9) 100%);
   background: radial-gradient(center,ellipse cover,rgba(0,0,0,0.4) 0,rgba(0,0,0,0.9) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#66000000',endColorstr='#e6000000',GradientType=1);
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
-  filter: alpha(opacity=50);
   -webkit-transition: all 0.3s ease-out;
      -moz-transition: all 0.3s ease-out;
       -ms-transition: all 0.3s ease-out;
@@ -104,8 +73,6 @@ tr.introjs-showElement > th {
   line-height: 10px;
   border: 3px solid white;
   border-radius: 50%;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff3019', endColorstr='#cf0404', GradientType=0); /* IE6-9 */
-  filter: progid:DXImageTransform.Microsoft.Shadow(direction=135, strength=2, color=ff0000); /* IE10 text shadows */
   box-shadow: 0 2px 5px rgba(0,0,0,.4);
 }
 
@@ -211,16 +178,12 @@ tr.introjs-showElement > th {
   -webkit-border-radius: 0.2em;
   -moz-border-radius: 0.2em;
   border-radius: 0.2em;
-  /* IE hacks */
-  zoom: 1;
-  *display: inline;
-  margin-top: 10px;
 }
 
 .introjs-button:hover {
   border-color: #bcbcbc;
   text-decoration: none;
-  box-shadow: 0px 1px 1px #e3e3e3;
+  box-shadow: 0 1px 1px #e3e3e3;
 }
 
 .introjs-button:focus,
@@ -249,6 +212,18 @@ tr.introjs-showElement > th {
 }
 
 .introjs-nextbutton {
+  -webkit-border-radius: 0 0.2em 0.2em 0;
+  -moz-border-radius: 0 0.2em 0.2em 0;
+  border-radius: 0 0.2em 0.2em 0;
+}
+
+.introjs-only-prevbutton {
+  -webkit-border-radius: 0 0.2em 0.2em 0;
+  -moz-border-radius: 0 0.2em 0.2em 0;
+  border-radius: 0 0.2em 0.2em 0;
+}
+
+.introjs-only-nextbutton {
   -webkit-border-radius: 0 0.2em 0.2em 0;
   -moz-border-radius: 0 0.2em 0.2em 0;
   border-radius: 0 0.2em 0.2em 0;
@@ -291,7 +266,7 @@ tr.introjs-showElement > th {
 .introjs-bullets ul li a:hover {
   background: #999;
 }
-.introjs-bullets ul li a.active {
+.introjs-bullets ul li a:active {
   background: #999;
 }
 
