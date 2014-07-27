@@ -472,20 +472,43 @@
     currentTooltipPosition = this._introItems[this._currentStep].position;
     switch (currentTooltipPosition) {
       case 'top':
+      case 'top-left-aligned':
         tooltipLayer.style.left = '15px';
         tooltipLayer.style.top = '-' + (_getOffset(tooltipLayer).height + 10) + 'px';
         arrowLayer.className = 'introjs-arrow bottom';
         break;
+      case 'top-right-aligned':
+        tooltipLayer.style.right = '0';
+        tooltipLayer.style.top = '-' + (_getOffset(tooltipLayer).height + 10) + 'px';
+        arrowLayer.className = 'introjs-arrow bottom-right';
+        break;
       case 'right':
+      case 'right-top-aligned':
         tooltipLayer.style.left = (_getOffset(targetElement).width + 20) + 'px';
         arrowLayer.className = 'introjs-arrow left';
         break;
+      case 'right-bottom-aligned':
+        tooltipLayer.style.left = (_getOffset(targetElement).width + 20) + 'px';
+        tooltipLayer.style.bottom = '0px';
+        arrowLayer.className = 'introjs-arrow left-bottom';
+        break;
       case 'left':
+      case 'left-top-aligned':
         if (this._options.showStepNumbers) {
           tooltipLayer.style.top = '15px';
         }
         tooltipLayer.style.right = (_getOffset(targetElement).width + 20) + 'px';
         arrowLayer.className = 'introjs-arrow right';
+        break;
+      case 'left-bottom-aligned':
+        if (this._options.showStepNumbers == true) {
+          tooltipLayer.style.right = (_getOffset(targetElement).width + 30) + 'px';
+        }
+        else {
+          tooltipLayer.style.right = (_getOffset(targetElement).width + 20) + 'px';
+        }
+        arrowLayer.className = 'introjs-arrow right-bottom';
+        tooltipLayer.style.bottom = '0px';
         break;
       case 'floating':
         arrowLayer.style.display = 'none';
