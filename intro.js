@@ -24,9 +24,9 @@
         step: 'data-intro-step',
         text: 'data-intro-text',
         key: 'data-intro-key',
-        skiplabel: 'data-intro-skiplabel',
-        prevlabel: 'data-intro-prevlabel',
-        nextlabel: 'data-intro-nextlebel',
+        skipLabel: 'data-intro-skiplabel',
+        prevLabel: 'data-intro-prevlabel',
+        nextLabel: 'data-intro-nextlebel',
         tooltip: 'data-intro-tooltipClass',
         position: 'data-intro-position',
         stepnumber: 'data-intro-stepnumber'
@@ -324,9 +324,16 @@
    * @method _goToStepNumber
    */
   function _goToStepNumber(step) {
-    this._currentStepNumber = step;
     if (typeof (this._introItems) !== 'undefined') {
-      _nextStep.call(this);
+      for (var i = 0, len = this._introItems.length; i < len; i++) {
+        var item = this._introItems[i];
+        if (item.step === step) {
+          // position us so that #_nextStep() will get us there:
+          this._currentStep = i - 1;
+          _nextStep.call(this);
+          break;
+        }
+      }
     }
   }
 
@@ -338,16 +345,6 @@
    */
   function _nextStep() {
     this._direction = 'forward';
-
-    if (typeof this._currentStepNumber !== 'undefined') {
-      for (var i = 0, len = this._introItems.length; i < len; i++) {
-        var item = this._introItems[i];
-        if (item.step === this._currentStepNumber) {
-          this._currentStep = i - 1;
-          this._currentStepNumber = undefined;
-        }
-      }
-    }
 
     if (typeof this._currentStep === 'undefined') {
       this._currentStep = 0;
@@ -691,14 +688,15 @@
 
     var self = this,
         oldHelperLayer = document.querySelector('.introjs-helperLayer'),
-        elementPosition = _getOffset(targetElement.element);
-    var oldHelperNumberLayer,
+        elementPosition = _getOffset(targetElement.element),
+        oldHelperNumberLayer,
         oldtooltipLayer,
         oldArrowLayer,
         oldtooltipContainer,
         skipTooltipButton,
         prevTooltipButton,
         nextTooltipButton,
+        currentItem = this._introItems[this._currentStep],
         i, stepsLength;
 
     if (oldHelperLayer != null) {
@@ -807,7 +805,7 @@
 
         anchorLink.onclick = onAnchorLink;
 
-        if (i === (targetElement.step - 1)) {
+        if (i === targetElement.step - 1) {
           anchorLink.className = 'active';
         }
 
@@ -851,7 +849,7 @@
       };
 
       nextTooltipButton.href = 'javascript:void(0);';
-      nextTooltipButton.innerHTML = self._introItems[self._currentStep].nextLabel;
+      nextTooltipButton.innerHTML = currentItem.nextLabel;
 
       //previous button
       prevTooltipButton = document.createElement('a');
@@ -863,13 +861,13 @@
       };
 
       prevTooltipButton.href = 'javascript:void(0);';
-      prevTooltipButton.innerHTML = self._introItems[self._currentStep].prevLabel;
+      prevTooltipButton.innerHTML = currentItem.prevLabel;
 
       //skip button
       skipTooltipButton = document.createElement('a');
       skipTooltipButton.className = 'introjs-button introjs-skipbutton';
       skipTooltipButton.href = 'javascript:void(0);';
-      skipTooltipButton.innerHTML = self._introItems[self._currentStep].skipLabel;
+      skipTooltipButton.innerHTML = currentItem.skipLabel;
 
       skipTooltipButton.onclick = function(e) {
         if (self._introItems.length - 1 === self._currentStep && typeof self._introCompleteCallback === 'function') {
@@ -914,7 +912,7 @@
       // first step but not last
       prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
       nextTooltipButton.className = 'introjs-button introjs-only-nextbutton';
-      skipTooltipButton.innerHTML = self._introItems[self._currentStep].skipLabel;
+      skipTooltipButton.innerHTML = currentItem.skipLabel;
 
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
       if (this._options.focusOnNextDoneButtons) {
@@ -924,7 +922,7 @@
       // last step
       prevTooltipButton.className = 'introjs-button introjs-only-prevbutton' + (at_checkpoint ? ' introjs-hidden' : '');
       nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
-      skipTooltipButton.innerHTML = this._options.doneLabel;
+      skipTooltipButton.innerHTML = currentItem.skipLabel;
 
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
       if (this._options.focusOnNextDoneButtons) {
@@ -934,7 +932,7 @@
       // the only step there is
       prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
       nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
-      skipTooltipButton.innerHTML = this._options.doneLabel;
+      skipTooltipButton.innerHTML = currentItem.skipLabel;
 
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
       if (this._options.focusOnNextDoneButtons) {
@@ -944,7 +942,7 @@
       // some intermediate step
       prevTooltipButton.className = 'introjs-button' + (at_checkpoint ? ' introjs-prevbutton introjs-hidden' : ' introjs-prevbutton');
       nextTooltipButton.className = 'introjs-button' + (at_checkpoint ? ' introjs-only-nextbutton' : ' introjs-nextbutton');
-      skipTooltipButton.innerHTML = self._introItems[self._currentStep].skipLabel;
+      skipTooltipButton.innerHTML = currentItem.skipLabel;
 
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
       if (this._options.focusOnNextDoneButtons) {
@@ -958,8 +956,7 @@
     var currentElementPosition = _getPropValue(targetElement.element, 'position');
     if (currentElementPosition !== 'absolute' &&
         currentElementPosition !== 'relative' &&
-        currentElementPosition !== 'fixed'
-        ) {
+        currentElementPosition !== 'fixed') {
       //change to new intro item
       targetElement.element.className += ' introjs-relativePosition';
     }
@@ -1038,15 +1035,15 @@
    */
   function _getWinSize() {
     if (window.innerWidth) {
-      return { 
-        width: window.innerWidth, 
-        height: window.innerHeight 
+      return {
+        width: window.innerWidth,
+        height: window.innerHeight
       };
     } else {
       var D = document.documentElement;
-      return { 
-        width: D.clientWidth, 
-        height: D.clientHeight 
+      return {
+        width: D.clientWidth,
+        height: D.clientHeight
       };
     }
   }
@@ -1167,14 +1164,14 @@
   function _mergeOptions(obj1, obj2) {
     var obj3 = {};
     var attrname;
-    for (attrname in obj1) { 
+    for (attrname in obj1) {
       if (obj1.hasOwnProperty(attrname)) {
-        obj3[attrname] = obj1[attrname]; 
+        obj3[attrname] = obj1[attrname];
       }
     }
     for (attrname in obj2) {
       if (obj2.hasOwnProperty(attrname)) {
-        obj3[attrname] = obj2[attrname]; 
+        obj3[attrname] = obj2[attrname];
       }
     }
     return obj3;
