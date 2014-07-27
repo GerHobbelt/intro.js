@@ -51,11 +51,14 @@ tr.introjs-showElement > th {
 
 .introjs-helperNumberLayer {
   position: absolute;
-  top: -16px;
-  left: -16px;
+  display: block;
+  box-sizing: border-box;   /* this is the magic entry which, when absent, makes the number render completely 'wrong' in content-box environments! */
+  top: -20px;
+  left: -20px;
+  margin: 0;
   z-index: 9999999999 !important;
   padding: 2px;
-  font-family: Arial, verdana, tahoma;
+  font-family: Arial, Verdana, Tahoma;
   font-size: 13px;
   font-weight: bold;
   color: white;
@@ -68,9 +71,9 @@ tr.introjs-showElement > th {
   background:     -ms-linear-gradient(top, #ff3019 0%, #cf0404 100%); /* IE10+ */
   background:      -o-linear-gradient(top, #ff3019 0%, #cf0404 100%); /* Opera 11.10+ */
   background:         linear-gradient(to bottom, #ff3019 0%, #cf0404 100%);  /* W3C */
-  width: 30px;    /* 30/30/20 works and should also work well for larger numbers; 20/20/10 also works. (w/h/lineheight) */
-  height:30px;
-  line-height: 20px;
+  width: 26px;    /* 30/30/20 works and should also work well for larger numbers; 20/20/10 also works. (w/h/lineheight) */
+  height:26px;
+  line-height: 16px;  /* width/height - 2 * border - 2 * padding */
   border: 3px solid white;
   border-radius: 50%;
   box-shadow: 0 2px 5px rgba(0,0,0,.4);
