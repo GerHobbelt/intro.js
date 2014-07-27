@@ -1,0 +1,16 @@
+{
+  "-W107"    : true,
+  "-W086"    : true,
+  "asi"      : true,
+  "boss"     : true,
+  "browser"  : true,
+  "curly"    : false,
+  "debug"    : true,
+  "devel"    : true,
+  "eqeqeq"   : false,
+  "eqnull"   : true,
+  "expr"     : true,
+  "laxbreak" : true,
+  "quotmark" : "single",
+  "validthis": true
+}

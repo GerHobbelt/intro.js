@@ -2,12 +2,12 @@
 *~
 *.bak
 
-# MSOffice temporary files
-~*
-
-# NPM/NodeJS stuff
-node_modules
-
 # misc dreck
 .DS_Store
+
+# Node stuff
+node_modules
+
+# dist output directory
+dist/
 

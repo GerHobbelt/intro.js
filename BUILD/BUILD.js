@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* jshint node: true */
+
 var fs = require('fs'),
   compressor = require('node-minify');
 
@@ -11,7 +13,7 @@ new compressor.minify({
     if (err) {
       console.log(err);
     } else {
-      console.log("JS minified successfully.");
+      console.log('JS minified successfully.');
     }
   }
 });
@@ -24,7 +26,7 @@ new compressor.minify({
     if (err) {
       console.log(err);
     } else {
-      console.log("Main CSS minified successfully.");
+      console.log('Main CSS minified successfully.');
     }
   }
 });
@@ -37,7 +39,7 @@ new compressor.minify({
     if (err) {
       console.log(err);
     } else {
-      console.log("RTL CSS minified successfully.");
+      console.log('RTL CSS minified successfully.');
     }
   }
 });
