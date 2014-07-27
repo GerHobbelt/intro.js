@@ -1,4 +1,6 @@
 {
+  "-W107"    : true,
+  "-W086"    : true,
   "asi"      : true,
   "boss"     : true,
   "browser"  : true,

@@ -1,15 +1,12 @@
 {
   "disallowKeywords": ["with"],
-  "requireLeftStickedOperators": [","],
-  "disallowLeftStickedOperators": ["?", "+", "-", "/", "*", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
-  "disallowRightStickedOperators": ["?", "/", "*", ":", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<="],
-  "disallowSpaceAfterPrefixUnaryOperators": ["++", "--", "+", "-", "~"],
+  "disallowSpaceBeforeBinaryOperators": [","],
+  "disallowSpaceAfterPrefixUnaryOperators": ["++", "--", "+", "-", "~", "!"],
   "disallowSpaceBeforePostfixUnaryOperators": ["++", "--"],
   "requireLineFeedAtFileEnd": true,
-  "requireRightStickedOperators": ["!"],
-  "requireSpaceAfterBinaryOperators": ["+", "-", "/", "*", "=", "==", "===", "!=", "!=="],
+  "requireSpaceAfterBinaryOperators": ["+", "-", "/", "*", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<=", "?"],
   "requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch", "return", "try", "catch"],
-  "requireSpaceBeforeBinaryOperators": ["+", "-", "/", "*", "=", "==", "===", "!=", "!=="],
+  "requireSpaceBeforeBinaryOperators": ["+", "-", "/", "*", "=", "==", "===", "!=", "!==", ">", ">=", "<", "<=", "?"],
   "requireSpacesInFunctionExpression": { "beforeOpeningCurlyBrace": true },
   "validateLineBreaks": "LF"
 }
