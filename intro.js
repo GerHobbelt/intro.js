@@ -413,6 +413,27 @@
 
     tooltipLayer.className = ('introjs-tooltip ' + tooltipCssClass).replace(/^\s+|\s+$/g, '');
 
+
+
+    // add overlay class if passed down
+    var currentStepObj = this._introItems[this._currentStep];
+    var overlayLayer = $('.introjs-overlay')[0];
+    if (typeof (currentStepObj.overlayClass) === 'string') {
+        overlayLayer.className = 'introjs-overlay ' + currentStepObj.overlayClass;
+    }else{
+        overlayLayer.className = 'introjs-overlay';
+    }
+
+
+   // add helper class if passed down
+    var helperLayer = $('.introjs-helperLayer')[0];
+    if (typeof (currentStepObj.helperClass) === 'string') {
+        helperLayer.className = 'introjs-helperLayer ' + currentStepObj.helperClass;
+    }else{
+        helperLayer.className = 'introjs-helperLayer';
+    }
+
+
     //custom css class for tooltip boxes
     var tooltipCssClass = this._options.tooltipClass;
 
@@ -516,7 +537,7 @@
         this._introChangeCallback.call(this, targetElement.element);
     }
 
-    
+
    if(this._currentStep > 0){
       var prevStepObj = this._introItems[this._currentStep-1];
       if (typeof (prevStepObj.onHide) === 'function') {
