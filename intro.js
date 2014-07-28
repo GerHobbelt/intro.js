@@ -516,6 +516,20 @@
         this._introChangeCallback.call(this, targetElement.element);
     }
 
+    
+   if(this._currentStep > 0){
+      var prevStepObj = this._introItems[this._currentStep-1];
+      if (typeof (prevStepObj.onHide) === 'function') {
+         prevStepObj.onHide.call();
+      }
+    }
+
+    var currentStepObj = this._introItems[this._currentStep];
+     if ( typeof (currentStepObj.onShow) === 'function') {
+       currentStepObj.onShow.call();
+    }
+   
+
     var self = this,
         oldHelperLayer = document.querySelector('.introjs-helperLayer'),
         elementPosition = _getOffset(targetElement.element);
