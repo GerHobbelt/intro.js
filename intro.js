@@ -581,6 +581,7 @@
       var helperLayer       = document.createElement('div'),
           arrowLayer        = document.createElement('div'),
           tooltipLayer      = document.createElement('div'),
+          tooltipHeaderTextLayer = document.createElement('div');
           tooltipTextLayer  = document.createElement('div'),
           bulletsLayer      = document.createElement('div'),
           buttonsLayer      = document.createElement('div');
@@ -594,6 +595,9 @@
       this._targetElement.appendChild(helperLayer);
 
       arrowLayer.className = 'introjs-arrow';
+
+      tooltipHeaderTextLayer.className = 'introjs-tooltipheadertext'
+      tooltipHeaderTextLayer.innerHTML = targetElement.header;
 
       tooltipTextLayer.className = 'introjs-tooltiptext';
       tooltipTextLayer.innerHTML = targetElement.intro;
@@ -632,6 +636,7 @@
       }
 
       tooltipLayer.className = 'introjs-tooltip';
+      tooltipLayer.appendChild(tooltipHeaderTextLayer);
       tooltipLayer.appendChild(tooltipTextLayer);
       tooltipLayer.appendChild(bulletsLayer);
 
