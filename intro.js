@@ -124,6 +124,7 @@
           introItems[step - 1] = {
             element: currentElement,
             intro: currentElement.getAttribute('data-intro'),
+            header: currentElement.getAttribute('data-header'),
             step: parseInt(currentElement.getAttribute('data-step'), 10),
             tooltipClass: currentElement.getAttribute('data-tooltipClass'),
             position: currentElement.getAttribute('data-position') || this._options.tooltipPosition
@@ -150,6 +151,7 @@
           introItems[nextStep] = {
             element: currentElement,
             intro: currentElement.getAttribute('data-intro'),
+            header: currentElement.getAttribute('data-header'),
             step: nextStep + 1,
             tooltipClass: currentElement.getAttribute('data-tooltipClass'),
             position: currentElement.getAttribute('data-position') || this._options.tooltipPosition
@@ -523,6 +525,7 @@
     if (oldHelperLayer != null) {
       var oldHelperNumberLayer = oldHelperLayer.querySelector('.introjs-helperNumberLayer'),
           oldtooltipLayer      = oldHelperLayer.querySelector('.introjs-tooltiptext'),
+          oldtooltipHeaderLayer      = oldHelperLayer.querySelector('.introjs-tooltipheadertext'),
           oldArrowLayer        = oldHelperLayer.querySelector('.introjs-arrow'),
           oldtooltipContainer  = oldHelperLayer.querySelector('.introjs-tooltip'),
           skipTooltipButton    = oldHelperLayer.querySelector('.introjs-skipbutton'),
@@ -565,6 +568,8 @@
         }
         //set current tooltip text
         oldtooltipLayer.innerHTML = targetElement.intro;
+        //set current tooltip header text
+        oldtooltipHeaderLayer.innerHTML = targetElement.header;
         //set the tooltip position
         _placeTooltip.call(self, targetElement.element, oldtooltipContainer, oldArrowLayer, oldHelperNumberLayer);
 
