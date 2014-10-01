@@ -464,7 +464,7 @@
         if (typeof (currentStepObj.offsetY) === 'number')  offsetY = currentStepObj.offsetY;
         tooltipLayer.style.top = '-' + (_getOffset(tooltipLayer).height + 10 + offsetY) + 'px';
         if (typeof (currentStepObj.offsetX) === 'number') offsetX = currentStepObj.offsetX;
-          tooltipLayer.style.left =  15  + currentStepObj.offsetX +"px";
+        tooltipLayer.style.left =  15  + offsetX +"px";
 
         arrowLayer.className = 'introjs-arrow bottom';
 
