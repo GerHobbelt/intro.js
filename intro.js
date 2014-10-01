@@ -325,6 +325,12 @@
       return;
     }
 
+    //call onHide function of active element
+    var currentStepObj = this._introItems[this._currentStep];
+    if (typeof (currentStepObj.onHide) === 'function') {
+       currentStepObj.onHide.call();
+    }
+
     //for fade-out animation
     overlayLayer.style.opacity = 0;
     setTimeout(function () {
