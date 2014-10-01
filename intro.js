@@ -41,7 +41,7 @@
       /* Default tooltip box position */
       tooltipPosition: 'bottom',
       /* Next CSS class for tooltip boxes */
-      tooltipClass: '',
+      tooltipClass: 'introjs-tooltip',
       /* Close introduction when pressing Escape button? */
       exitOnEsc: true,
       /* Close introduction when clicking on overlay layer? */
@@ -386,7 +386,7 @@
    * @param {Object} arrowLayer
    */
   function _placeTooltip(targetElement, tooltipLayer, arrowLayer, helperNumberLayer) {
-    var tooltipCssClass = '',
+    var tooltipCssClass = "",
         currentStepObj,
         tooltipOffset,
         targetElementOffset;
@@ -430,6 +430,17 @@
         overlayLayer.className = 'introjs-overlay';
     }
 
+    // add first and last tooltip classes
+    var firstOrLastTooltipClass  = "";
+    if(this._currentStep == 0){
+      firstOrLastTooltipClass = "first-tooltip";
+    }else if(this._currentStep ==  this._introItems.length-1){
+      firstOrLastTooltipClass = "last-tooltip";
+
+    }
+    tooltipCssClass = this._options.tooltipClass + " "  + firstOrLastTooltipClass;
+
+
 
    // add helper class if passed down
     var helperLayer = $('.introjs-helperLayer')[0];
@@ -441,14 +452,22 @@
 
 
     //custom css class for tooltip boxes
-    var tooltipCssClass = this._options.tooltipClass;
+    // var tooltipCssClass = this._options.tooltipClass;
+
+    tooltipLayer.className = (tooltipCssClass).replace(/^\s+|\s+$/g, '');
 
     currentTooltipPosition = this._introItems[this._currentStep].position;
     switch (currentTooltipPosition) {
       case 'top':
-        tooltipLayer.style.left = '15px';
-        tooltipLayer.style.top = '-' + (_getOffset(tooltipLayer).height + 10) + 'px';
+        var offsetX = 0;  
+        var offsetY = 0;  
+        if (typeof (currentStepObj.offsetY) === 'number')  offsetY = currentStepObj.offsetY;
+        tooltipLayer.style.top = '-' + (_getOffset(tooltipLayer).height + 10 + offsetY) + 'px';
+        if (typeof (currentStepObj.offsetX) === 'number') offsetX = currentStepObj.offsetX;
+          tooltipLayer.style.left =  15  + currentStepObj.offsetX +"px";
+
         arrowLayer.className = 'introjs-arrow bottom';
+
         break;
       case 'right':
         tooltipLayer.style.left = (_getOffset(targetElement).width + 20) + 'px';
@@ -478,6 +497,14 @@
         }
 
         break;
+
+      case 'top-right-aligned':
+        arrowLayer.className      = 'introjs-arrow bottom-right';
+        tooltipLayer.style.right  = '0px';
+        var offsetY = 0;  
+        if (typeof (currentStepObj.offsetY) === 'number')  offsetY = currentStepObj.offsetY;
+          tooltipLayer.style.top = '-' + (_getOffset(tooltipLayer).height + 10 + offsetY) + 'px';
+        break;
       case 'bottom-right-aligned':
         arrowLayer.className      = 'introjs-arrow top-right';
         tooltipLayer.style.right  = '0px';
@@ -496,8 +523,16 @@
       case 'bottom':
       // Bottom going to follow the default behavior
       default:
-        tooltipLayer.style.bottom = '-' + (_getOffset(tooltipLayer).height + 10) + 'px';
+
+       var offsetY = 0;  
+        if (typeof (currentStepObj.offsetY) === 'number')  offsetY = currentStepObj.offsetY;
+        tooltipLayer.style.bottom = '-' + (_getOffset(tooltipLayer).height + 10 + offsetY) + 'px';
+        if (typeof (currentStepObj.offsetX) === 'number') 
+          tooltipLayer.style.left =  currentStepObj.offsetX +"px";
         arrowLayer.className = 'introjs-arrow top';
+
+        // tooltipLayer.style.bottom = '-' + (_getOffset(tooltipLayer).height + 10) + 'px';
+        // arrowLayer.className = 'introjs-arrow top';
         break;
     }
   }
