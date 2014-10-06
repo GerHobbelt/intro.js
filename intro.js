@@ -409,16 +409,13 @@
     //prevent error when `this._currentStep` is undefined
     if (!this._introItems[this._currentStep]) return;
 
-    //if we have a custom css class for each step
+   //if we have a custom css class for each step
     currentStepObj = this._introItems[this._currentStep];
     if (typeof (currentStepObj.tooltipClass) === 'string') {
-      tooltipCssClass = currentStepObj.tooltipClass;
-    } else {
-      tooltipCssClass = this._options.tooltipClass;
+      tooltipCssClass = this._options.tooltipClass + ' ' +  currentStepObj.tooltipClass;
+    }else{
+       tooltipCssClass = this._options.tooltipClass;
     }
-
-    tooltipLayer.className = ('introjs-tooltip ' + tooltipCssClass).replace(/^\s+|\s+$/g, '');
-
 
 
     // add overlay class if passed down
@@ -438,8 +435,9 @@
       firstOrLastTooltipClass = "last-tooltip";
 
     }
-    tooltipCssClass = this._options.tooltipClass + " "  + firstOrLastTooltipClass;
 
+
+    tooltipLayer.className = (tooltipCssClass + " "  + firstOrLastTooltipClass).replace(/^\s+|\s+$/g, '');
 
 
    // add helper class if passed down
@@ -450,11 +448,6 @@
         helperLayer.className = 'introjs-helperLayer';
     }
 
-
-    //custom css class for tooltip boxes
-    // var tooltipCssClass = this._options.tooltipClass;
-
-    tooltipLayer.className = (tooltipCssClass).replace(/^\s+|\s+$/g, '');
 
     currentTooltipPosition = this._introItems[this._currentStep].position;
     switch (currentTooltipPosition) {
