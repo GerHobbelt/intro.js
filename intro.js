@@ -87,20 +87,6 @@
           currentItem.element = document.querySelector(currentItem.element);
         }
 
-        //intro without element
-        if (typeof(currentItem.element) === 'undefined' || currentItem.element == null) {
-          var floatingElementQuery = document.querySelector(".introjsFloatingElement");
-
-          if (floatingElementQuery == null) {
-            floatingElementQuery = document.createElement('div');
-            floatingElementQuery.className = 'introjsFloatingElement';
-
-            document.body.appendChild(floatingElementQuery);
-          }
-
-          currentItem.element  = floatingElementQuery;
-          currentItem.position = 'floating';
-        }
 
         if (currentItem.element != null) {
           introItems.push(currentItem);
@@ -431,7 +417,8 @@
     var firstOrLastTooltipClass  = "";
     if(this._currentStep == 0){
       firstOrLastTooltipClass = "first-tooltip";
-    }else if(this._currentStep ==  this._introItems.length-1){
+    }
+    if(this._currentStep ==  this._introItems.length-1){
       firstOrLastTooltipClass = "last-tooltip";
 
     }
