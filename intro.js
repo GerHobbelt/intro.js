@@ -359,7 +359,7 @@
     }
 
     //set the step to zero
-    this._currentStep = undefined;
+    this._currentStep = 0;
   }
 
   /**
