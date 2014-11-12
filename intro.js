@@ -1,5 +1,5 @@
 /**
- * Intro.js v0.9.1 -- RALLY SPECIFIC FORK
+ * Intro.js v0.9.2 -- RALLY SPECIFIC FORK
  * https://github.com/usablica/intro.js
  * MIT licensed
  *
@@ -19,7 +19,7 @@
   }
 } (this, function (exports) {
   //Default config/variables
-  var VERSION = '0.9.1';
+  var VERSION = '0.9.2';
 
   /**
    * IntroJs main class
