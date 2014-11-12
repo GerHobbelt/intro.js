@@ -1,5 +1,5 @@
 /**
- * Intro.js v0.9.0
+ * Intro.js v0.9.1 -- RALLY SPECIFIC FORK
  * https://github.com/usablica/intro.js
  * MIT licensed
  *
@@ -19,7 +19,7 @@
   }
 } (this, function (exports) {
   //Default config/variables
-  var VERSION = '0.9.0';
+  var VERSION = '0.9.1';
 
   /**
    * IntroJs main class
@@ -81,26 +81,6 @@
         var currentItem = _cloneObject(this._options.steps[i]);
         //set the step
         currentItem.step = introItems.length + 1;
-        //use querySelector function only when developer used CSS selector
-        if (typeof(currentItem.element) === 'string') {
-          //grab the element with given selector from the page
-          currentItem.element = document.querySelector(currentItem.element);
-        }
-
-        //intro without element
-        if (typeof(currentItem.element) === 'undefined' || currentItem.element == null) {
-          var floatingElementQuery = document.querySelector(".introjsFloatingElement");
-
-          if (floatingElementQuery == null) {
-            floatingElementQuery = document.createElement('div');
-            floatingElementQuery.className = 'introjsFloatingElement';
-
-            document.body.appendChild(floatingElementQuery);
-          }
-
-          currentItem.element  = floatingElementQuery;
-          currentItem.position = 'floating';
-        }
 
         if (currentItem.element != null) {
           introItems.push(currentItem);
@@ -255,6 +235,18 @@
     }
   }
 
+  function _doStep(step) {
+    if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
+      var me = this;
+      this._introBeforeChangeCallback.call(this, step, function(possibleNextElement) {
+        step.element = possibleNextElement || step.element;
+        _showElement.call(me, step);
+      });
+    } else {
+      _showElement.call(this, step);
+    }
+  }
+
   /**
    * Go to next step on intro
    *
@@ -281,11 +273,7 @@
     }
 
     var nextStep = this._introItems[this._currentStep];
-    if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
-      this._introBeforeChangeCallback.call(this, nextStep.element);
-    }
-
-    _showElement.call(this, nextStep);
+    _doStep.call(this, nextStep);
   }
 
   /**
@@ -302,11 +290,7 @@
     }
 
     var nextStep = this._introItems[--this._currentStep];
-    if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
-      this._introBeforeChangeCallback.call(this, nextStep.element);
-    }
-
-    _showElement.call(this, nextStep);
+    _doStep.call(this, nextStep);
   }
 
   /**
@@ -511,6 +495,10 @@
    * @param {Object} targetElement
    */
   function _showElement(targetElement) {
+    if (typeof(targetElement.element) === 'string') {
+      //grab the element with given selector from the page
+      targetElement.element = document.querySelector(targetElement.element);
+    }
 
     if (typeof (this._introChangeCallback) !== 'undefined') {
         this._introChangeCallback.call(this, targetElement.element);
@@ -553,7 +541,11 @@
 
       //remove old classes
       var oldShowElement = document.querySelector('.introjs-showElement');
-      oldShowElement.className = oldShowElement.className.replace(/introjs-[a-zA-Z]+/g, '').replace(/^\s+|\s+$/g, '');
+
+      if (oldShowElement) {
+        oldShowElement.className = oldShowElement.className.replace(/introjs-[a-zA-Z]+/g, '').replace(/^\s+|\s+$/g, '');
+      }
+
       //we should wait until the CSS3 transition is competed (it's 0.3 sec) to prevent incorrect `height` and `width` calculation
       if (self._lastShowElementTimer) {
         clearTimeout(self._lastShowElementTimer);

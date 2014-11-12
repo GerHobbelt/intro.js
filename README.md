@@ -1,3 +1,25 @@
+# Rally's Intro.js fork
+
+## TL;DR
+This fork has changes specific to our needs, you're better off with the [main intro.js](https://github.com/usablica/intro.js/)
+
+## What we did
+This fork is based off of Intro.js 0.9.0. It primarly makes two changes:
+
+* doesn't look for the specified element until needed. Intro.js normally takes all selectors in your steps and grabs the DOM elements from them ahead of time. This doesn't work if your steps specify elements that don't exist yet.
+
+* The onBeforeChange now expects a callback to let intro.js know when to proceed. This allows us to do things between steps.
+
+Basically, what we are doing is building an intro tour that's dynamic and involves us programatically clicking on things to show the user how stuff works.
+
+## Based on 0.9.0
+
+This fork is based on 0.9.0, not 1.0.0. That is because 1.0.0 really broke our tour a lot (even without our hacks). Rather than investigate why, going with 0.9.0 as it works very well.
+
+------------------------
+original README follows
+------------------------
+
 # Intro.js
 
 > Better introductions for websites and features with a step-by-step guide for your projects.
