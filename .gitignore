@@ -10,4 +10,8 @@ node_modules
 
 # dist output directory
 dist/
+     
+# temporaries from the github analysis scripts
+__forks.info__/
+__forks__.bulk_dump
 
