@@ -248,6 +248,14 @@
 .introjs-bullets ul li a.active {
   background: #999;
 }
+
+.introjs-progress {
+  background-color: #FAFAFA;
+}
+.introjs-progressbar {
+  background-color: #2980b9;
+}
+
 .introjsFloatingElement {
   position: absolute;
   height: 0;

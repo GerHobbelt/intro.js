@@ -160,7 +160,7 @@
   background: transparent;
   text-decoration: none;
   font: 11px/normal sans-serif;
-  color: ##2980b9 !important;
+  color: #2980b9 !important;
   white-space: nowrap;
   cursor: pointer;
   outline: none !important;
@@ -279,6 +279,15 @@
 .introjs-bullets ul li a.active {
   background: #999;
 }
+
+.introjs-progress {
+  background-color: #FAFAFA;
+  margin: 5px 20px;
+}
+.introjs-progressbar {
+  background-color: #2980b9;
+}
+
 .introjsFloatingElement {
   position: absolute;
   height: 0;

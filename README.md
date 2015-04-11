@@ -370,6 +370,7 @@ introJs().onafterchange(function(targetElement) {
  - `data-intro-text`: The tooltip text of step
  - `data-intro-step`: Optionally define the number (priority) of step
  - `data-intro-tooltipClass`: Optionally define a CSS class for tooltip
+ - `data-intro-highlightClass`: Optionally append a CSS class to the helperLayer
  - `data-intro-position`: Optionally define the position of tooltip, `top`, `left`, `right`, `bottom`, `bottom-left-aligned` (same as 'bottom'), 'bottom-middle-aligned' and 'bottom-right-aligned'. Default is `bottom`
  - `data-intro-nextLabel`: Optionally customize the text of the nextLabel
  - `data-intro-skipLabel`: Optionally customize the text of the skipLabel
@@ -384,14 +385,17 @@ introJs().onafterchange(function(targetElement) {
  - `doneLabel`: Done button label
  - `tooltipPosition`: Default tooltip position
  - `tooltipClass`: Adding CSS class to all tooltips
+ - `highlightClass`: Additional CSS class for the helperLayer
  - `exitOnEsc`: Exit introduction when pressing Escape button, `true` or `false`
  - `exitOnOverlayClick`: Exit introduction when clicking on overlay layer, `true` or `false`
  - `showStepNumbers`: Show steps number in the red circle or not, `true` or `false`
  - `keyboardNavigation`: Navigating with keyboard or not, `true` or `false`
  - `showButtons`: Show introduction navigation buttons or not, `true` or `false`
  - `showBullets`: Show introduction bullets or not, `true` or `false`
+ - `showProgress`: Show introduction progress or not, `true` or `false`
  - `scrollToElement`: Auto scroll to highlighted element if it's outside of viewport, `true` or `false`
  - `overlayOpacity`: Adjust the overlay opacity, `Number`
+ - `disableInteraction`: Disable an interaction inside element or not, `true` or `false`
 
 See [setOption](https://github.com/usablica/intro.js/#introjssetoptionoption-value) to see an example.
 
@@ -449,11 +453,19 @@ Want to learn faster and easier? Here we have **Instant IntroJs**, Packt Publish
 
 ## Roadmap
 
-- Fix problems with `position: fixed` and other positions
 - Provide more examples
 - Add more templates
 
 ## Release History
+
+ * **v1.0.0** - 2014-10-17
+   - Auto-positioning feature for tooltip box
+   - Add progress-bar to tooltip box
+   - Fix `z-index` issue
+   - Add dark template
+   - Fix bad sizing with Bootstrap 3
+   - Add disable interaction ability
+   - Fix code styling issues and many minor bug fixes
 
  * **v0.9.0** - 2014-05-23
    - Add IntroJS templates
