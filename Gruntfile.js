@@ -1,6 +1,6 @@
 /* jshint node: true */
 /*!
- * Visyond's Gruntfile
+ * IntroJS's Gruntfile
  */
 
 module.exports = function (grunt) {
