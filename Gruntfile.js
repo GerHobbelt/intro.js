@@ -74,6 +74,8 @@ module.exports = function (grunt) {
       src: [
         'introjs.css',
         'introjs-rtl.css',
+        //'introjs-msie-hacks.css',
+        'themes/*.css',
         'example/assets/css/bootstrap.css',
         'example/assets/css/demo.css'
       ]

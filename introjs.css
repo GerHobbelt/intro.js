@@ -104,96 +104,99 @@ tr.introjs-showElement > th {
   background:      -o-linear-gradient(top, #ff3019 0%, #cf0404 100%); /* Opera 11.10+ */
   background:         linear-gradient(to bottom, #ff3019 0%, #cf0404 100%);  /* W3C */
   width: 26px;    /* 30/30/20 works and should also work well for larger numbers; 20/20/10 also works. (w/h/lineheight) */
-  height:26px;
+  height: 26px;
   line-height: 16px;  /* width/height - 2 * border - 2 * padding */
   border: 3px solid white;
   border-radius: 50%;
   box-shadow: 0 2px 5px rgba(0,0,0,.4);
 }
 
+.introjs-helperNumberLayer:after {
+}
+
 .introjs-arrow {
   border: 5px solid white;
-  content:'';
+  content: '';
   position: absolute;
 }
 .introjs-arrow.top {
   top: -10px;
-  border-top-color:transparent;
-  border-right-color:transparent;
-  border-bottom-color:white;
-  border-left-color:transparent;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: white;
+  border-left-color: transparent;
 }
 .introjs-arrow.top-right {
   top: -10px;
   right: 10px;
-  border-top-color:transparent;
-  border-right-color:transparent;
-  border-bottom-color:white;
-  border-left-color:transparent;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: white;
+  border-left-color: transparent;
 }
 .introjs-arrow.top-middle {
   top: -10px;
   left: 50%;
   margin-left: -5px;
-  border-top-color:transparent;
-  border-right-color:transparent;
-  border-bottom-color:white;
-  border-left-color:transparent;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: white;
+  border-left-color: transparent;
 }
 .introjs-arrow.right {
   right: -10px;
   top: 10px;
-  border-top-color:transparent;
-  border-right-color:transparent;
-  border-bottom-color:transparent;
-  border-left-color:white;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: white;
 }
 .introjs-arrow.right-bottom {
   right: -10px;
   bottom: 10px;
-  border-top-color:transparent;
-  border-right-color:transparent;
-  border-bottom-color:transparent;
-  border-left-color:white;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: white;
 }
 .introjs-arrow.bottom {
   bottom: -10px;
-  border-top-color:white;
-  border-right-color:transparent;
-  border-bottom-color:transparent;
-  border-left-color:transparent;
+  border-top-color: white;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
 }
 .introjs-arrow.bottom-right {
   bottom: -10px;
   right: 10px;
-  border-top-color:white;
-  border-right-color:transparent;
-  border-bottom-color:transparent;
-  border-left-color:transparent;
+  border-top-color: white;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
 }
 .introjs-arrow.left {
   left: -10px;
   top: 10px;
-  border-top-color:transparent;
-  border-right-color:white;
-  border-bottom-color:transparent;
-  border-left-color:transparent;
-}
-.introjs-arrow.left-bottom {
-  left: -10px;
-  bottom:10px;
-  border-top-color:transparent;
-  border-right-color:white;
-  border-bottom-color:transparent;
-  border-left-color:transparent;
+  border-top-color: transparent;
+  border-right-color: white;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
 }
 .introjs-arrow.left-bottom {
   left: -10px;
   bottom: 10px;
-  border-top-color:transparent;
-  border-right-color:white;
-  border-bottom-color:transparent;
-  border-left-color:transparent;
+  border-top-color: transparent;
+  border-right-color: white;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+}
+.introjs-arrow.left-bottom {
+  left: -10px;
+  bottom: 10px;
+  border-top-color: transparent;
+  border-right-color: white;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
 }
 
 .introjs-tooltip {
@@ -210,6 +213,9 @@ tr.introjs-showElement > th {
       -ms-transition: opacity 0.1s ease-out;
        -o-transition: opacity 0.1s ease-out;
           transition: opacity 0.1s ease-out;
+}
+
+.introjs-tooltiptext {
 }
 
 .introjs-tooltipbuttons {
@@ -275,6 +281,13 @@ tr.introjs-showElement > th {
   color: #7a7a7a;
 }
 
+.introjs-skipbutton:hover {
+}
+
+.introjs-skipbutton:active, 
+.introjs-skipbutton:focus {
+}
+
 .introjs-prevbutton {
   -webkit-border-radius: 0.2em 0 0 0.2em;
   -moz-border-radius: 0.2em 0 0 0.2em;
@@ -295,7 +308,9 @@ tr.introjs-showElement > th {
   border-radius: 0.2em;
 }
 
-.introjs-disabled, .introjs-disabled:hover, .introjs-disabled:focus {
+.introjs-disabled, 
+.introjs-disabled:hover, 
+.introjs-disabled:focus {
   color: #9a9a9a;
   border-color: #d4d4d4;
   box-shadow: none;
@@ -341,7 +356,7 @@ tr.introjs-showElement > th {
   height: 10px;
   margin: 10px 0 5px 0;
   border-radius: 4px;
-  background-color: #ecf0f1
+  background-color: #ecf0f1;
 }
 .introjs-progressbar {
   float: left;

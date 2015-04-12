@@ -6,7 +6,7 @@ for: IntroJs (https://github.com/usablica/intro.js)
 .introjs-overlay {
   position: absolute;
   z-index: 999999;
-  background:#fff;
+  background: #fff;
   -webkit-transition: all 0.3s ease-out;
      -moz-transition: all 0.3s ease-out;
       -ms-transition: all 0.3s ease-out;
@@ -17,12 +17,23 @@ for: IntroJs (https://github.com/usablica/intro.js)
 .introjs-fixParent {
   z-index: auto !important;
   opacity: 1.0 !important;
+  position: absolute !important;
+  -webkit-transform: none !important;
+     -moz-transform: none !important;
+      -ms-transform: none !important;
+       -o-transform: none !important;
+          transform: none !important;
 }
 
 .introjs-showElement,
 tr.introjs-showElement > td,
 tr.introjs-showElement > th {
   z-index: 9999999 !important;
+}
+
+.introjs-disableInteraction {
+  z-index: 99999999 !important;
+  position: absolute;
 }
 
 .introjs-relativePosition,
@@ -34,7 +45,7 @@ tr.introjs-showElement > th {
 .introjs-helperLayer {
   position: absolute;
   z-index: 9999998;
-  background:#656D78;
+  background: #656D78;
   -webkit-transition: all 0.3s ease-out;
      -moz-transition: all 0.3s ease-out;
       -ms-transition: all 0.3s ease-out;
@@ -42,74 +53,129 @@ tr.introjs-showElement > th {
           transition: all 0.3s ease-out;
 }
 
+.introjs-tooltipReferenceLayer {
+  position: absolute;
+  z-index: 10000000;
+  background-color: transparent;
+  -webkit-transition: all 0.3s ease-out;
+     -moz-transition: all 0.3s ease-out;
+      -ms-transition: all 0.3s ease-out;
+       -o-transition: all 0.3s ease-out;
+          transition: all 0.3s ease-out;
+}
+
+.introjs-helperLayer *,
+.introjs-helperLayer *:before,
+.introjs-helperLayer *:after {
+  -webkit-box-sizing: content-box;
+     -moz-box-sizing: content-box;
+      -ms-box-sizing: content-box;
+       -o-box-sizing: content-box;
+          box-sizing: content-box;
+}
+
 .introjs-helperNumberLayer {
   position: absolute;
-
   z-index: 9999999999 !important;
   padding: 10px;
-  font-family: Arial, verdana, tahoma;
+  font-family: Arial, Verdana, Tahoma;
   font-size: 13px;
-  top:-40px;
+  top: -40px;
   font-weight: bold;
   color: white;
   text-align: center;
-  background:#434A54;
+  background: #434A54;
   width: 20px;
-  height:20px;
+  height: 20px;
   line-height: 20px;
+}
+
+.introjs-helperNumberLayer:after {
 }
 
 .introjs-arrow {
   border: 5px solid #434A54;
-  content:'';
+  content: '';
   position: absolute;
 }
 .introjs-arrow.top {
   top: -10px;
-  border-top-color:transparent;
-  border-right-color:transparent;
-  border-bottom-color:#434A54;
-  border-left-color:transparent;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: #434A54;
+  border-left-color: transparent;
 }
 .introjs-arrow.top-right {
   top: -10px;
   right: 10px;
-  border-top-color:transparent;
-  border-right-color:transparent;
-  border-bottom-color:#434A54;
-  border-left-color:transparent;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: #434A54;
+  border-left-color: transparent;
 }
 .introjs-arrow.top-middle {
   top: -10px;
   left: 50%;
   margin-left: -5px;
-  border-top-color:transparent;
-  border-right-color:transparent;
-  border-bottom-color:#434A54;
-  border-left-color:transparent;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: #434A54;
+  border-left-color: transparent;
 }
 .introjs-arrow.right {
   right: -10px;
   top: 10px;
-  border-top-color:transparent;
-  border-right-color:transparent;
-  border-bottom-color:transparent;
-  border-left-color:#434A54;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: #434A54;
+}
+.introjs-arrow.right-bottom {
+  right: -10px;
+  bottom: 10px;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: #434A54;
 }
 .introjs-arrow.bottom {
   bottom: -10px;
-  border-top-color:#434A54;
-  border-right-color:transparent;
-  border-bottom-color:transparent;
-  border-left-color:transparent;
+  border-top-color: #434A54;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+}
+.introjs-arrow.bottom-right {
+  bottom: -10px;
+  right: 10px;
+  border-top-color: #434A54;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
 }
 .introjs-arrow.left {
   left: -10px;
   top: 10px;
-  border-top-color:transparent;
-  border-right-color:#434A54;
-  border-bottom-color:transparent;
-  border-left-color:transparent;
+  border-top-color: transparent;
+  border-right-color: #434A54;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+}
+.introjs-arrow.left-bottom {
+  left: -10px;
+  bottom: 10px;
+  border-top-color: transparent;
+  border-right-color: #434A54;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+}
+.introjs-arrow.left-bottom {
+  left: -10px;
+  bottom: 10px;
+  border-top-color: transparent;
+  border-right-color: #434A54;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
 }
 
 .introjs-tooltip {
@@ -117,10 +183,9 @@ tr.introjs-showElement > th {
   padding: 10px;
   background-color: #434A54;
   min-width: 200px;
-  padding-top:30px;
-
+  padding-top: 30px;
   max-width: 300px;
-  color:#fff;
+  color: #fff;
   -webkit-transition: opacity 0.1s ease-out;
      -moz-transition: opacity 0.1s ease-out;
       -ms-transition: opacity 0.1s ease-out;
@@ -128,14 +193,17 @@ tr.introjs-showElement > th {
           transition: opacity 0.1s ease-out;
 }
 
+.introjs-tooltiptext {
+}
+
 .introjs-tooltipbuttons {
   text-align: right;
-  position:relative;
-  bottom:-44px;
-  margin-left:-10px;
-  margin-right:-10px;
-  padding:5px;
-  background:#656D78;
+  position: relative;
+  bottom: -44px;
+  margin-left: -10px;
+  margin-right: -10px;
+  padding: 5px;
+  background: #656D78;
 }
 
 /*
@@ -160,22 +228,18 @@ tr.introjs-showElement > th {
   -moz-background-clip: padding;
   -o-background-clip: padding-box;
   /*background-clip: padding-box;*/ /* commented out due to Opera 11.10 bug */
-  /* IE hacks */
-  zoom: 1;
-  *display: inline;
-  margin-top: 10px;
 }
 
 .introjs-button:hover {
   text-decoration: none;
-  color:#434A54 !important;
-  background:#fff;
+  color: #434A54 !important;
+  background: #fff;
 }
 
 .introjs-button:focus,
 .introjs-button:active {
-  background:#fff !important;
-  color:#434A54 !important;
+  background: #fff !important;
+  color: #434A54 !important;
 }
 
 /* overrides extra padding on button elements in Firefox */
@@ -189,23 +253,37 @@ tr.introjs-showElement > th {
   color: #fff;
 }
 
-.introjs-prevbutton {
+.introjs-skipbutton:hover {
+}
 
+.introjs-skipbutton:active, 
+.introjs-skipbutton:focus {
+}
+
+.introjs-prevbutton {
   border-right: none;
 }
 
+.introjs-nextbutton {
+}
 
-.introjs-disabled, .introjs-disabled:hover, .introjs-disabled:focus {
+.introjs-only-prevbutton,
+.introjs-only-nextbutton {
+}
+
+.introjs-disabled, 
+.introjs-disabled:hover, 
+.introjs-disabled:focus {
   color: #fff;
   box-shadow: none;
   cursor: default;
-  background:transparent;
-  border-color:transparent;
+  background: transparent;
+  border-color: transparent;
 }
 
 .introjs-bullets {
   text-align: center;
-  display:none;
+  display: none;
 }
 .introjs-bullets ul {
   clear: both;
@@ -222,18 +300,39 @@ tr.introjs-showElement > th {
   display: block;
   width: 8px;
   height: 8px;
+  background: white;
   background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-  -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
   text-decoration: none;
 }
 .introjs-bullets ul li a:hover {
+  background: white;
   background: rgba(255,255,255,0.2);
 }
-.introjs-bullets ul li a.active {
+.introjs-bullets ul li a:active {
+  background: white;
   background: rgba(255,255,255,0.2);
 }
+
+.introjs-progress {
+  overflow: hidden;
+  height: 10px;
+  margin: 10px 0 5px 0;
+  border-radius: 4px;
+  background-color: black;
+}
+.introjs-progressbar {
+  float: left;
+  width: 0%;
+  height: 100%;
+  font-size: 10px;
+  line-height: 10px;
+  text-align: center;
+  background-color: white;
+}
+
 .introjsFloatingElement {
   position: absolute;
   height: 0;
@@ -241,3 +340,8 @@ tr.introjs-showElement > th {
   left: 50%;
   top: 50%;
 }
+
+.introjs-hidden {
+    display: none;
+}
+
