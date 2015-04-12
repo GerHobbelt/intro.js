@@ -180,10 +180,10 @@
         currentElement = allIntroSteps[i];
         step = parseInt(currentElement.getAttribute(attrNames.step), 10);
 
-        if (step > 0  && !isKeyDuplicate(currentElement)) {
+        if (step > 0 && !isKeyDuplicate(currentElement)) {
           introItems[step - 1] = {
             element: currentElement,
-            step: parseInt(currentElement.getAttribute(attrNames.step), 10)
+            step: step
           };
         }
       }
@@ -313,21 +313,22 @@
     return false;
   }
 
- /*
-   * makes a copy of the object
+  /**
+   * Makes a copy of the object
    * @api private
    * @method _cloneObject
-  */
+   */
   function _cloneObject(object) {
-      if (object == null || typeof object !== 'object' || typeof object.nodeType !== 'undefined') {
-          return object;
-      }
-      var temp = {};
-      for (var key in object) {
-          temp[key] = _cloneObject(object[key]);
-      }
-      return temp;
+    if (object == null || typeof object !== 'object' || typeof object.nodeType !== 'undefined') {
+      return object;
+    }
+    var temp = {};
+    for (var key in object) {
+      temp[key] = _cloneObject(object[key]);
+    }
+    return temp;
   }
+
   /**
    * Go to specific step of introduction
    *
@@ -442,15 +443,15 @@
     }
 
     if (this._options.overlayOpacity === 0) {
-        overlayLayer.parentNode.removeChild(overlayLayer);
+      overlayLayer.parentNode.removeChild(overlayLayer);
     } else {
-        //for fade-out animation
-        overlayLayer.style.opacity = 0;
-        setTimeout(function () {
-            if (overlayLayer.parentNode) {
-                overlayLayer.parentNode.removeChild(overlayLayer);
-            }
-        }, 500);
+      //for fade-out animation
+      overlayLayer.style.opacity = 0;
+      setTimeout(function () {
+        if (overlayLayer.parentNode) {
+          overlayLayer.parentNode.removeChild(overlayLayer);
+        }
+      }, 500);
     }
 
     //remove all helper layers
@@ -462,7 +463,8 @@
     var referenceLayer = targetElement.querySelector('.introjs-tooltipReferenceLayer');
     if (referenceLayer) {
       referenceLayer.parentNode.removeChild(referenceLayer);
-	}
+    }
+
     //remove disableInteractionLayer
     var disableInteractionLayer = targetElement.querySelector('.introjs-disableInteraction');
     if (disableInteractionLayer) {
@@ -655,7 +657,6 @@
    *
    */
   function _determineAutoPosition(targetElement, tooltipLayer, desiredTooltipPosition) {
-
     // Take a clone of position precedence. These will be the available
     var possiblePositions = this._options.positionPrecedence.slice()
 
@@ -744,11 +745,10 @@
       }
 
       //set new position to helper layer
-      helperLayer.setAttribute('style', 'width: ' + (elementPosition.width  + widthHeightPadding)  + 'px; ' +
-                                        'height:' + (elementPosition.height + widthHeightPadding)  + 'px; ' +
-                                        'top:'    + (elementPosition.top    - 5)   + 'px;' +
-                                        'left: '  + (elementPosition.left   - 5)   + 'px;');
-
+      helperLayer.setAttribute('style', 'width: ' + (elementPosition.width  + widthHeightPadding) + 'px; ' +
+                                        'height:' + (elementPosition.height + widthHeightPadding) + 'px; ' +
+                                        'top:'    + (elementPosition.top    - 5) + 'px;' +
+                                        'left: '  + (elementPosition.left   - 5) + 'px;');
     }
   }
 
@@ -833,7 +833,6 @@
    * @param {Object} targetElement
    */
   function _showElement(targetElement) {
-
     if (typeof this._introChangeCallback !== 'undefined') {
       this._introChangeCallback.call(this, targetElement.element);
     }
@@ -1229,9 +1228,9 @@
       window.scrollTo(0, 0); // scroll to top when highlighting the whole page
     } else if (/* !_elementInViewport(targetElement.element)) && */ this._options.scrollToElement) {
       var rect = targetElement.element.getBoundingClientRect(),
-        winHeight = _getWinSize().height,
-        top = rect.top,
-        bottom = Math.min(rect.bottom - winHeight, rect.top - 130); // do not overscroll the top + 30px padding
+          winHeight = _getWinSize().height,
+          top = rect.top,
+          bottom = Math.min(rect.bottom - winHeight, rect.top - 130); // do not overscroll the top + 30px padding
 
       //Scroll up
       if (top < 0 || targetElement.element.clientHeight > winHeight) {
@@ -1443,7 +1442,6 @@
     if (typeof targetElm === 'object') {
       //Ok, create a new instance
       return new IntroJs(targetElm, textData);
-
     } else if (typeof targetElm === 'string') {
       //select the target element with query selector
       var targetElement = document.querySelector(targetElm);
