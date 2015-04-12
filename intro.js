@@ -33,12 +33,6 @@
         stepnumber: 'data-intro-stepnumber'
       };
 
-  function assert(condition) {
-    if (!condition) {
-      debugger;
-    }
-  }
-
   /**
    * IntroJs main class
    *
@@ -869,20 +863,12 @@
 
     if (oldHelperLayer != null) {
       oldHelperNumberLayer = oldReferenceLayer.querySelector('.introjs-helperNumberLayer');
-      assert(oldReferenceLayer);
       oldtooltipLayer      = oldReferenceLayer.querySelector('.introjs-tooltiptext');
       oldArrowLayer        = oldReferenceLayer.querySelector('.introjs-arrow');
       oldtooltipContainer  = oldReferenceLayer.querySelector('.introjs-tooltip');
       skipTooltipButton    = oldReferenceLayer.querySelector('.introjs-skipbutton');
       prevTooltipButton    = oldReferenceLayer.querySelector('.introjs-prevbutton, .introjs-only-prevbutton');
       nextTooltipButton    = oldReferenceLayer.querySelector('.introjs-nextbutton, .introjs-only-nextbutton');
-      assert(this._options.showStepNumbers ? oldHelperNumberLayer : !oldHelperNumberLayer);
-      assert(oldtooltipLayer);
-      assert(oldArrowLayer);
-      assert(oldtooltipContainer);
-      assert(skipTooltipButton);
-      assert(prevTooltipButton);
-      assert(nextTooltipButton);
 
       //update or reset the helper highlight class
       oldHelperLayer.className = highlightClass;
@@ -1130,10 +1116,6 @@
       //set proper position
       _placeTooltip.call(self, targetElement.element, tooltipLayer, arrowLayer, helperNumberLayer);
     }
-
-    assert(skipTooltipButton);
-    assert(prevTooltipButton);
-    assert(nextTooltipButton);
 
     //disable interaction
     if (this._options.disableInteraction === true) {
