@@ -17,5 +17,6 @@
   "universal-selector": false,
   "unqualified-attributes": false,
   "empty-rules": false,
-  "zero-units": false
+  "zero-units": false,
+  "overqualified-elements": false
 }
