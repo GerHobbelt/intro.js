@@ -33,6 +33,12 @@
         stepnumber: 'data-intro-stepnumber'
       };
 
+  function assert(condition) {
+    if (!condition) {
+      debugger;
+    }
+  }
+
   /**
    * IntroJs main class
    *
@@ -350,7 +356,7 @@
    * @method _goToStepNumber
    */
   function _goToStepNumber(step) {
-    if (typeof (this._introItems) !== 'undefined') {
+    if (typeof this._introItems !== 'undefined') {
       for (var i = 0, len = this._introItems.length; i < len; i++) {
         var item = this._introItems[i];
         if (item.step === step) {
@@ -745,10 +751,10 @@
       }
 
       //set new position to helper layer
-      helperLayer.setAttribute('style', 'width: ' + (elementPosition.width  + widthHeightPadding) + 'px; ' +
-                                        'height:' + (elementPosition.height + widthHeightPadding) + 'px; ' +
-                                        'top:'    + (elementPosition.top    - 5) + 'px;' +
-                                        'left: '  + (elementPosition.left   - 5) + 'px;');
+      helperLayer.setAttribute('style', 'width: '  + (elementPosition.width  + widthHeightPadding) + 'px; ' +
+                                        'height: ' + (elementPosition.height + widthHeightPadding) + 'px; ' +
+                                        'top: '    + (elementPosition.top    - 5) + 'px;' +
+                                        'left: '   + (elementPosition.left   - 5) + 'px;');
     }
   }
 
@@ -760,7 +766,7 @@
    */
   function _disableInteraction () {
     var disableInteractionLayer = document.querySelector('.introjs-disableInteraction');
-    if (disableInteractionLayer === null) {
+    if (disableInteractionLayer == null) {
       disableInteractionLayer = document.createElement('div');
       disableInteractionLayer.className = 'introjs-disableInteraction';
       this._targetElement.appendChild(disableInteractionLayer);
@@ -853,22 +859,30 @@
         i, stepsLength;
 
     //check for a current step highlight class
-    if (typeof (targetElement.highlightClass) === 'string') {
-      highlightClass += (' ' + targetElement.highlightClass);
+    if (typeof targetElement.highlightClass === 'string') {
+      highlightClass += ' ' + targetElement.highlightClass;
     }
     //check for options highlight class
-    if (typeof (this._options.highlightClass) === 'string') {
-      highlightClass += (' ' + this._options.highlightClass);
+    if (typeof this._options.highlightClass === 'string') {
+      highlightClass += ' ' + this._options.highlightClass;
     }
 
     if (oldHelperLayer != null) {
       oldHelperNumberLayer = oldReferenceLayer.querySelector('.introjs-helperNumberLayer');
+      assert(oldReferenceLayer);
       oldtooltipLayer      = oldReferenceLayer.querySelector('.introjs-tooltiptext');
       oldArrowLayer        = oldReferenceLayer.querySelector('.introjs-arrow');
       oldtooltipContainer  = oldReferenceLayer.querySelector('.introjs-tooltip');
       skipTooltipButton    = oldReferenceLayer.querySelector('.introjs-skipbutton');
-      prevTooltipButton    = oldReferenceLayer.querySelector('.introjs-prevbutton');
-      nextTooltipButton    = oldReferenceLayer.querySelector('.introjs-nextbutton');
+      prevTooltipButton    = oldReferenceLayer.querySelector('.introjs-prevbutton, .introjs-only-prevbutton');
+      nextTooltipButton    = oldReferenceLayer.querySelector('.introjs-nextbutton, .introjs-only-nextbutton');
+      assert(this._options.showStepNumbers ? oldHelperNumberLayer : !oldHelperNumberLayer);
+      assert(oldtooltipLayer);
+      assert(oldArrowLayer);
+      assert(oldtooltipContainer);
+      assert(skipTooltipButton);
+      assert(prevTooltipButton);
+      assert(nextTooltipButton);
 
       //update or reset the helper highlight class
       oldHelperLayer.className = highlightClass;
@@ -885,14 +899,10 @@
       }
 
       //set current nextLabel text
-      if (nextTooltipButton) {
-        nextTooltipButton.innerHTML = targetElement.nextLabel;
-      }
+      nextTooltipButton.innerHTML = targetElement.nextLabel;
 
       //set current skipLabel text
-      if (skipTooltipButton) {
-        skipTooltipButton.innerHTML = targetElement.skipLabel;
-      }
+      skipTooltipButton.innerHTML = targetElement.skipLabel;
 
       //set new position to helper layer
       _setHelperLayerPosition.call(self, oldHelperLayer);
@@ -946,15 +956,28 @@
           oldHelperNumberLayer.style.opacity = 1;
         }
 
-        //reset button focus
-        if (!nextTooltipButton || nextTooltipButton.tabIndex === -1) {
-          //tabindex of -1 means we are at the end of the tour - focus on skip / done
-          skipTooltipButton.focus();
-        } else {
-          //still in the tour, focus on next
-          nextTooltipButton.focus();
+        if (0) {
+            //reset button focus
+            if (nextTooltipButton.tabIndex === -1) {
+              //tabindex of -1 means we are at the end of the tour - focus on skip / done
+              skipTooltipButton.focus();
+            } else {
+              //still in the tour, focus on next
+              nextTooltipButton.focus();
+            }
         }
       }, 350);
+
+      if (01) {
+          //reset button focus
+          if (nextTooltipButton.tabIndex === -1) {
+            //tabindex of -1 means we are at the end of the tour - focus on skip / done
+            skipTooltipButton.focus();
+          } else {
+            //still in the tour, focus on next
+            nextTooltipButton.focus();
+          }
+      }
     } else {
       var helperLayer       = document.createElement('div'),
           referenceLayer    = document.createElement('div'),
@@ -1108,17 +1131,17 @@
       _placeTooltip.call(self, targetElement.element, tooltipLayer, arrowLayer, helperNumberLayer);
     }
 
+    assert(skipTooltipButton);
+    assert(prevTooltipButton);
+    assert(nextTooltipButton);
+
     //disable interaction
     if (this._options.disableInteraction === true) {
       _disableInteraction.call(self);
     }
 
-    if (prevTooltipButton) {
-      prevTooltipButton.removeAttribute('tabIndex');
-    }
-    if (nextTooltipButton) {
-      nextTooltipButton.removeAttribute('tabIndex');
-    }
+    prevTooltipButton.removeAttribute('tabIndex');
+    nextTooltipButton.removeAttribute('tabIndex');
 
     // show disabled prev button on checkpoints?
     var at_checkpoint = false;
@@ -1131,14 +1154,10 @@
 
     if (this._currentStep === 0 && this._introItems.length > 1) {
       // first step but not last
-      if (prevTooltipButton) {
-        prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
-        prevTooltipButton.tabIndex = '-1';
-      }
+      prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
+      prevTooltipButton.tabIndex = '-1';
       nextTooltipButton.className = 'introjs-button introjs-only-nextbutton';
-      if (skipTooltipButton) {
-        skipTooltipButton.innerHTML = currentItem.skipLabel;
-      }
+      skipTooltipButton.innerHTML = currentItem.skipLabel;
 
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
       if (this._options.focusOnNextDoneButtons) {
@@ -1146,50 +1165,32 @@
       }
     } else if (this._introItems.length - 1 === this._currentStep && this._introItems.length > 1) {
       // last step
-      if (prevTooltipButton) {
-        prevTooltipButton.className = 'introjs-button introjs-only-prevbutton' + (at_checkpoint ? ' introjs-hidden' : '');
-      }
-      if (nextTooltipButton) {
-        nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
-        nextTooltipButton.tabIndex = '-1';
-      }
-      if (skipTooltipButton) {
-        skipTooltipButton.innerHTML = currentItem.skipLabel;
+      prevTooltipButton.className = 'introjs-button introjs-only-prevbutton' + (at_checkpoint ? ' introjs-hidden' : '');
+      nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
+      nextTooltipButton.tabIndex = '-1';
+      skipTooltipButton.innerHTML = currentItem.skipLabel;
 
-        //Set focus on "done" button, so that hitting Enter always terminates the intro
-        if (this._options.focusOnNextDoneButtons) {
-          skipTooltipButton.focus();
-        }
+      //Set focus on "done" button, so that hitting Enter always terminates the intro
+      if (this._options.focusOnNextDoneButtons) {
+        skipTooltipButton.focus();
       }
     } else if (this._introItems.length === 1) {
       // the only step there is
-      if (prevTooltipButton) {
-        prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
-        prevTooltipButton.tabIndex = '-1';
-      }
-      if (nextTooltipButton) {
-        nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
-        nextTooltipButton.tabIndex = '-1';
-      }
-      if (skipTooltipButton) {
-        skipTooltipButton.innerHTML = currentItem.skipLabel;
+      prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-hidden';
+      prevTooltipButton.tabIndex = '-1';
+      nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-hidden';
+      nextTooltipButton.tabIndex = '-1';
+      skipTooltipButton.innerHTML = currentItem.skipLabel;
 
-        //Set focus on "done" button, so that hitting Enter always terminates the intro
-        if (this._options.focusOnNextDoneButtons) {
-          skipTooltipButton.focus();
-        }
+      //Set focus on "done" button, so that hitting Enter always terminates the intro
+      if (this._options.focusOnNextDoneButtons) {
+        skipTooltipButton.focus();
       }
     } else {
       // some intermediate step
-      if (prevTooltipButton) {
-        prevTooltipButton.className = 'introjs-button' + (at_checkpoint ? ' introjs-prevbutton introjs-hidden' : ' introjs-prevbutton');
-      }
-      if (nextTooltipButton) {
-        nextTooltipButton.className = 'introjs-button' + (at_checkpoint ? ' introjs-only-nextbutton' : ' introjs-nextbutton');
-      }
-      if (skipTooltipButton) {
-        skipTooltipButton.innerHTML = currentItem.skipLabel;
-      }
+      prevTooltipButton.className = 'introjs-button' + (at_checkpoint ? ' introjs-prevbutton introjs-hidden' : ' introjs-prevbutton');
+      nextTooltipButton.className = 'introjs-button' + (at_checkpoint ? ' introjs-only-nextbutton' : ' introjs-nextbutton');
+      skipTooltipButton.innerHTML = currentItem.skipLabel;
 
       //Set focus on "next" button, so that hitting Enter always moves you onto the next step
       if (this._options.focusOnNextDoneButtons) {

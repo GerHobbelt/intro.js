@@ -352,7 +352,7 @@ tr.introjs-showElement > th {
 .introjs-bullets ul li a:hover {
   background: #999;
 }
-.introjs-bullets ul li a:active {
+.introjs-bullets ul li a.active {
   background: #999;
 }
 
