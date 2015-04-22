@@ -851,7 +851,8 @@
       //next button
       var nextTooltipButton = document.createElement('a');
 
-      nextTooltipButton.onclick = function() {
+      nextTooltipButton.onclick = function(e) {
+        e.preventDefault();
         if (self._introItems.length - 1 != self._currentStep) {
           _nextStep.call(self);
         }
@@ -863,7 +864,8 @@
       //previous button
       var prevTooltipButton = document.createElement('a');
 
-      prevTooltipButton.onclick = function() {
+      prevTooltipButton.onclick = function(e) {
+        e.preventDefault();
         if (self._currentStep != 0) {
           _previousStep.call(self);
         }
