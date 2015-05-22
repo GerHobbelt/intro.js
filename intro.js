@@ -1064,7 +1064,8 @@
       nextTooltipButton = document.createElement('a');
       nextTooltipButton.className = 'introjs-button introjs-nextbutton';
 
-      nextTooltipButton.onclick = function() {
+      nextTooltipButton.onclick = function(e) {
+        e.preventDefault();
         if (self._introItems.length - 1 !== self._currentStep) {
           _nextStep.call(self);
         }
@@ -1077,7 +1078,8 @@
       prevTooltipButton = document.createElement('a');
       prevTooltipButton.className = 'introjs-button introjs-prevbutton';
 
-      prevTooltipButton.onclick = function() {
+      prevTooltipButton.onclick = function(e) {
+        e.preventDefault();
         if (self._currentStep !== 0) {
           _previousStep.call(self);
         }

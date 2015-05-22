@@ -16,17 +16,6 @@
           transition: all 0.3s ease-out;
 }
 
-.introjs-fixParent {
-  z-index: auto !important;
-  opacity: 1.0 !important;
-  position: absolute !important;
-  -webkit-transform: none !important;
-     -moz-transform: none !important;
-      -ms-transform: none !important;
-       -o-transform: none !important;
-          transform: none !important;
-}
-
 .introjs-showElement,
 tr.introjs-showElement > td,
 tr.introjs-showElement > th {
@@ -47,8 +36,7 @@ tr.introjs-showElement > th {
 .introjs-helperLayer {
   position: absolute;
   z-index: 9999998;
-  background-color: #FFF;
-  background-color: rgba(255,255,255,.9);
+  background: rgba(white, .3);
   border: 1px solid #777;
   border: 1px solid rgba(0,0,0,.5);
   border-radius: 4px;
