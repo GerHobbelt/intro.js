@@ -3,6 +3,11 @@
 > Better introductions for websites and features with a step-by-step guide for your projects.
 
 
+## Latest news
+
+Sorry for this long delay on releasing the new version of IntroJS. We are working to merge pull requests and address almost all issues. IntroJS is **still alive** and we will release a new version soon.
+
+
 ## Where to get
 
 You can obtain your local copy of Intro.js from:
@@ -62,6 +67,7 @@ In order to use templates, all you need to do is appending the template styleshe
 
 
 ## API
+
 
 ### introJs([targetElm])
 
@@ -402,6 +408,7 @@ See [setOption](https://github.com/usablica/intro.js/#introjssetoptionoption-val
 
 ## Using with:
 
+
 ### Rails
 
 If you are using the rails asset pipeline you can use the [introjs-rails](https://github.com/heelhook/intro.js-rails) gem.
@@ -455,6 +462,7 @@ Want to learn faster and easier? Here we have **Instant IntroJs**, Packt Publish
 
 - Provide more examples
 - Add more templates
+
 
 ## Release History
 
