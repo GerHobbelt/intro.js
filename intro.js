@@ -355,7 +355,12 @@
     }
     var temp = {};
     for (var key in object) {
-      temp[key] = _cloneObject(object[key]);
+      // Prevent runaway recursion while cloning: keep jQuery references as-is:
+      if (object[key] instanceof jQuery) {
+	    temp[key] = object[key];
+      } else {
+	    temp[key] = _cloneObject(object[key]);
+      }
     }
     return temp;
   }
