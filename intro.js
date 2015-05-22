@@ -92,6 +92,8 @@
       positionPrecedence: ['bottom', 'top', 'right', 'left'],
       /* Disable an interaction with element? */
       disableInteraction: false,
+      /* How much padding around the selected element? */
+      helperElementPadding: 10,
       /* {String|Array} Which are the current role(s) of the user? (We can serve different content based on user role.) */
       activeRoles: null,
       /* {Function} Wrap the intro text in a user specified template. Function call interface: function(roleAndText, index, collectedIntroTexts) */
@@ -793,7 +795,7 @@
 
       var currentElement  = this._introItems[this._currentStep],
           elementPosition = _getOffset(currentElement.element),
-          widthHeightPadding = 10;
+          widthHeightPadding = this._options.helperElementPadding;
 
       if (currentElement.position === 'floating') {
         widthHeightPadding = 0;
@@ -802,8 +804,8 @@
       //set new position to helper layer
       helperLayer.setAttribute('style', 'width: '  + (elementPosition.width  + widthHeightPadding) + 'px; ' +
                                         'height: ' + (elementPosition.height + widthHeightPadding) + 'px; ' +
-                                        'top: '    + (elementPosition.top    - 5) + 'px;' +
-                                        'left: '   + (elementPosition.left   - 5) + 'px;');
+                                        'top:'     + (elementPosition.top    - widthHeightPadding / 2) + 'px;' +
+                                        'left: '   + (elementPosition.left   - widthHeightPadding / 2) + 'px;');
     }
   }
 
