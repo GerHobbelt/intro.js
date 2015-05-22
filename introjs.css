@@ -102,6 +102,15 @@ tr.introjs-showElement > th {
 .introjs-helperNumberLayer:after {
 }
 
+.introjs-steps-number {
+  display: block;
+  margin: 0 auto;
+}
+
+.introjs-steps-number li {
+  float: left;
+}
+
 .introjs-arrow {
   border: 5px solid white;
   content: '';

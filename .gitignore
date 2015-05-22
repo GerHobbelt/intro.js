@@ -4,6 +4,7 @@
 
 # misc dreck
 .DS_Store
+.idea
 
 # Node stuff
 node_modules
