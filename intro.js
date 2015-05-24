@@ -293,7 +293,9 @@
             _previousStep.call(self);
           } else if (target && target.className.indexOf('introjs-skipbutton') > 0) {
             // user hit enter while focusing on skip button
-            _exitIntro.call(self, targetElm);
+            _onSkipButtonHit.call(self, {
+              keyDownEvent: e
+            });
           } else {
             // default behavior for responding to enter
             _nextStep.call(self);
@@ -676,9 +678,12 @@
         tooltipLayer.style.marginLeft = '-' + (tooltipWidth / 2)  + 'px';
         tooltipLayer.style.marginTop  = '-' + (tooltipHeight / 2) + 'px';
 
-        if (typeof helperNumberLayer !== 'undefined' && helperNumberLayer != null) {
-          helperNumberLayer.style.left = '-' + ((tooltipWidth / 2) + 18) + 'px';
-          helperNumberLayer.style.top  = '-' + ((tooltipHeight / 2) + 18) + 'px';
+        if (targetElement.className.indexOf('introjsFloatingElement') !== -1) {
+          // If there's no target element, position the step number next to the tooltip.
+          if (typeof helperNumberLayer !== 'undefined' && helperNumberLayer != null) {
+            helperNumberLayer.style.left = '-' + ((tooltipOffset.width / 2) + 18) + 'px';
+            helperNumberLayer.style.top  = '-' + ((tooltipOffset.height / 2) + 18) + 'px';
+          }
         }
         break;
       case 'bottom-right-aligned':
@@ -1220,19 +1225,9 @@
       skipTooltipButton.innerHTML = currentItem.skipLabel;
 
       skipTooltipButton.onclick = function(e) {
-        if (self._introItems.length - 1 === self._currentStep && typeof self._introCompleteCallback === 'function') {
-          self._introCompleteCallback.call(self, {
-            skipButtonEvent: e
-          });
-        }
-
-        if (self._introItems.length - 1 !== self._currentStep && typeof self._introExitCallback === 'function') {
-          self._introExitCallback.call(self, {
-            skipButtonEvent: e
-          });
-        }
-
-        _exitIntro.call(self, self._targetElement);
+          _onSkipButtonHit.call(self, {
+          skipButtonEvent: e
+        });
       };
 
       buttonsLayer.appendChild(skipTooltipButton);
@@ -1308,7 +1303,7 @@
 
       // Set focus on "next" button, so that hitting Enter always moves you onto the next step
       if (this._options.focusOnNextDoneButtons) {
-        nextTooltipButton.focus();
+    nextTooltipButton.focus();
       }
     }
 
@@ -1380,6 +1375,20 @@
       this._introAfterChangeCallback.call(this, targetElement.element);
     }
   }
+
+  function _onSkipButtonHit(opts) {
+    var isLastStep = this._introItems.length - 1 === this._currentStep;
+
+    if (isLastStep && typeof this._introCompleteCallback === 'function') {
+      this._introCompleteCallback.call(this, opts);
+    }
+
+    if (!isLastStep && typeof this._introExitCallback === 'function') {
+      this._introExitCallback.call(this, opts);
+    }
+
+    _exitIntro.call(this, this._targetElement);
+  };
 
   /**
    * Get an element CSS property on the page

@@ -50,6 +50,7 @@ tr.introjs-showElement > th {
 
 .introjs-tooltipReferenceLayer {
   position: absolute;
+  visibility: hidden;
   z-index: 10000000;
   background-color: transparent;
   -webkit-transition: all 0.3s ease-out;
@@ -71,6 +72,7 @@ tr.introjs-showElement > th {
 
 .introjs-helperNumberLayer {
   position: absolute;
+  visibility: visible;
   display: block;
   box-sizing: border-box;   /* this is the magic entry which, when absent, makes the number render completely 'wrong' in content-box environments! */
   top: -20px;
@@ -198,6 +200,7 @@ tr.introjs-showElement > th {
 
 .introjs-tooltip {
   position: absolute;
+  visibility: visible;
   padding: 10px;
   background-color: white;
   color: black;
