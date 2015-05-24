@@ -73,7 +73,7 @@
       /* Show tour bullets? */
       showBullets: true,
       /* Show tour progress? */
-      showProgress: false,
+      showProgress: true,
       /* Scroll to highlighted element? */
       scrollToElement: true,
       /* Set the overlay opacity */
