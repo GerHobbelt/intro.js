@@ -1207,21 +1207,39 @@
       parentElm = parentElm.parentNode;
     }
 
+    var panel = $(".ui-tabs-panel:visible");
+    var helperLayer = $(".introjs-helperLayer");
+    var tooltipReferenceLayer = $(".introjs-tooltipReferenceLayer");
+    var target = $(targetElement.element);
+
     if (targetElement.element.tagName.toLowerCase() === 'body') {
       window.scrollTo(0, 0); // scroll to top when highlighting the whole page
-    } else if (/* !_elementInViewport(targetElement.element)) && */ this._options.scrollToElement) {
+    } else if ((!_elementInViewport(targetElement.element) || panel.scrollTop() > 0) && this._options.scrollToElement) {
+      var scrollTop = target.offset().top + panel.scrollTop(); //get the scrollbar position
+      var offset = 200; // 150px padding from edge to look nice
+      panel.scrollTop(scrollTop - offset);
+      // Check when scrollbar is at the bottom of the panel
+      if (target.offset().top > offset) { 
+        offset = target.offset().top;
+      }
+      // Reposition the intro to fit in page
+      helperLayer.css("top", offset - 5);        
+      tooltipReferenceLayer.css("top", offset - 5);
+
+      if (0) {
       var rect = targetElement.element.getBoundingClientRect(),
           winHeight = _getWinSize().height,
           top = rect.top,
           bottom = Math.min(rect.bottom - winHeight, rect.top - 130); // do not overscroll the top + 30px padding
 
-      //Scroll up
+      // Scroll up
       if (top < 0 || targetElement.element.clientHeight > winHeight) {
         window.scrollBy(0, Math.round(top - 30)); // 30px padding from edge to look nice
 
-      //Scroll down
+      // Scroll down
       } else {
         window.scrollBy(0, Math.round(bottom + 100)); // 70px + 30px padding from edge to look nice
+      }
       }
     }
 
