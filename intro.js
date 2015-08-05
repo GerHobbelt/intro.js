@@ -273,7 +273,7 @@
       self._onKeyDown = function(e) {
         if (e.keyCode === 27 && self._options.exitOnEsc) {
           // escape key pressed
-          // check if any callback is defined
+          // check if exit callback is defined
           if (typeof self._introExitCallback === 'function') {
             self._introExitCallback.call(self, {
               keyDownEvent: e
