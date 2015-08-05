@@ -55,7 +55,7 @@
       /* Default tooltip box position */
       tooltipPosition: 'bottom',
       /* Next CSS class for tooltip boxes */
-      tooltipClass: '',
+      tooltipClass: 'introjs-tooltip',
       /* CSS class that is added to the helperLayer */
       highlightClass: '',
       /* Close introduction when pressing Escape button? */
@@ -162,21 +162,23 @@
           currentItem.intro = currentItem.intro.innerHTML;
         }
 
-        // intro without element
-        if (!currentItem.element) {
-          var floatingElementQuery = document.querySelector('.introjsFloatingElement');
+        if (0) {
+            // intro without element
+            if (!currentItem.element) {
+              var floatingElementQuery = document.querySelector('.introjsFloatingElement');
 
-          if (!floatingElementQuery) {
-            floatingElementQuery = document.createElement('div');
-            floatingElementQuery.className = 'introjsFloatingElement';
+              if (!floatingElementQuery) {
+                floatingElementQuery = document.createElement('div');
+                floatingElementQuery.className = 'introjsFloatingElement';
 
-            document.body.appendChild(floatingElementQuery);
-          }
+                document.body.appendChild(floatingElementQuery);
+              }
 
-          currentItem.element  = floatingElementQuery;
-          currentItem.position = 'floating';
+              currentItem.element  = floatingElementQuery;
+              currentItem.position = 'floating';
+            }
         }
-
+        
         if (currentItem.element && window.getComputedStyle(currentItem.element).display !== 'none') {
           introItems.push(currentItem);
         }
@@ -500,6 +502,12 @@
       return;
     }
 
+    //call onHide function of active element
+    var currentStepObj = this._introItems[this._currentStep];
+    if (typeof (currentStepObj.onHide) === 'function') {
+       currentStepObj.onHide.call();
+    }
+
     if (this._options.overlayOpacity === 0) {
       overlayLayer.parentNode.removeChild(overlayLayer);
     } else {
@@ -529,12 +537,14 @@
       disableInteractionLayer.parentNode.removeChild(disableInteractionLayer);
     }
 
-    // remove intro floating element
-    var floatingElement = document.querySelector('.introjsFloatingElement');
-    if (floatingElement) {
-      floatingElement.parentNode.removeChild(floatingElement);
+    if (0) {
+        // remove intro floating element
+        var floatingElement = document.querySelector('.introjsFloatingElement');
+        if (floatingElement) {
+          floatingElement.parentNode.removeChild(floatingElement);
+        }
     }
-
+    
     // remove `introjs-showElement` class from the element
     var showElement = document.querySelector('.introjs-showElement');
     if (showElement) {
@@ -559,7 +569,7 @@
     }
 
     // set the step to zero
-    this._currentStep = undefined;
+    this._currentStep = 0;
   }
 
   /**
@@ -598,12 +608,38 @@
     // if we have a custom css class for each step
     currentStepObj = this._introItems[this._currentStep];
     if (typeof currentStepObj.tooltipClass === 'string') {
-      tooltipCssClass = currentStepObj.tooltipClass;
+      tooltipCssClass = this._options.tooltipClass + ' ' + currentStepObj.tooltipClass;
     } else {
       tooltipCssClass = this._options.tooltipClass;
     }
 
-    tooltipLayer.className = ('introjs-tooltip ' + tooltipCssClass).replace(/^\s+|\s+$/g, '');
+    // add overlay class if passed down
+    var currentStepObj = this._introItems[this._currentStep];
+    var overlayLayer = $('.introjs-overlay')[0];
+    if (typeof (currentStepObj.overlayClass) === 'string') {
+      overlayLayer.className = 'introjs-overlay ' + currentStepObj.overlayClass;
+    } else {
+      overlayLayer.className = 'introjs-overlay';
+    }
+
+    // add first and last tooltip classes
+    var firstOrLastTooltipClass = "";
+    if (this._currentStep === 0) {
+      firstOrLastTooltipClass = "first-tooltip";
+    }
+    if (this._currentStep === this._introItems.length - 1) {
+      firstOrLastTooltipClass = "last-tooltip";
+    }
+
+    tooltipLayer.className = (tooltipCssClass + ' ' + firstOrLastTooltipClass).replace(/^\s+|\s+$/g, '');
+
+    // add helper class if passed down
+    var helperLayer = $('.introjs-helperLayer')[0];
+    if (typeof (currentStepObj.helperClass) === 'string') {
+      helperLayer.className = 'introjs-helperLayer ' + currentStepObj.helperClass;
+    } else {
+      helperLayer.className = 'introjs-helperLayer';
+    }
 
     currentTooltipPosition = this._introItems[this._currentStep].position;
     if ((currentTooltipPosition === 'auto' || this._options.tooltipPosition === 'auto')) {
@@ -616,58 +652,62 @@
     var tooltipHeight = tooltipOffset.height;
     var tooltipWidth = tooltipOffset.width;
     var windowSize = _getWinSize();
+    var offsetX = 0;  
+    var offsetY = 0;  
+    if (typeof (currentStepObj.offsetY) === 'number') offsetY = currentStepObj.offsetY;
+    if (typeof (currentStepObj.offsetX) === 'number') offsetX = currentStepObj.offsetX;
     switch (currentTooltipPosition) {
       case 'top':
       case 'top-left-aligned':
-        tooltipLayer.style.left = '15px';
-        tooltipLayer.style.top = '-' + (tooltipHeight + 10) + 'px';
+        tooltipLayer.style.left = (15 + offsetX) + 'px';
+        tooltipLayer.style.top = '-' + (tooltipHeight + 10 - offsetY) + 'px';
         arrowLayer.className = 'introjs-arrow bottom';
         break;
       case 'top-right-aligned':
-        tooltipLayer.style.right = '0';
-        tooltipLayer.style.top = '-' + (tooltipHeight + 10) + 'px';
+        tooltipLayer.style.right = (0 - offsetX) + 'px';
+        tooltipLayer.style.top = '-' + (tooltipHeight + 10 - offsetY) + 'px';
         arrowLayer.className = 'introjs-arrow bottom-right';
         break;
       case 'right':
       case 'right-top-aligned':
-        tooltipLayer.style.left = (targetOffset.width + 20) + 'px';
+        tooltipLayer.style.left = (targetOffset.width + 20 + offsetX) + 'px';
         arrowLayer.className = 'introjs-arrow left';
         if (targetOffset.top + tooltipHeight > windowSize.height) {
           // In this case, right would have fallen below the bottom of the screen.
           // Modify so that the bottom of the tooltip connects with the target
           arrowLayer.className = 'introjs-arrow left-bottom';
-          tooltipLayer.style.top = '-' + (tooltipHeight - targetOffset.height - 20) + 'px';
+          tooltipLayer.style.top = '-' + (tooltipHeight - targetOffset.height - 20 - offsetY) + 'px';
         }
         break;
       case 'right-bottom-aligned':
-        tooltipLayer.style.left = (targetOffset.width + 20) + 'px';
-        tooltipLayer.style.bottom = '0px';
+        tooltipLayer.style.left = (targetOffset.width + 20 + offsetX) + 'px';
+        tooltipLayer.style.bottom = (0 - offsetX) + 'px';
         arrowLayer.className = 'introjs-arrow left-bottom';
         break;
       case 'left':
       case 'left-top-aligned':
         if (this._options.showStepNumbers) {
-          tooltipLayer.style.top = '15px';
+          tooltipLayer.style.top = (15 + offsetY) + 'px';
         }
 
         if (targetOffset.top + tooltipHeight > windowSize.height) {
           // In this case, left would have fallen below the bottom of the screen.
           // Modify so that the bottom of the tooltip connects with the target
-          tooltipLayer.style.top = '-' + (tooltipHeight - targetOffset.height - 20) + 'px';
+          tooltipLayer.style.top = '-' + (tooltipHeight - targetOffset.height - 20 - offsetY) + 'px';
           arrowLayer.className = 'introjs-arrow right-bottom';
         } else {
           arrowLayer.className = 'introjs-arrow right';
         }
-        tooltipLayer.style.right = (targetOffset.width + 20) + 'px';
+        tooltipLayer.style.right = (targetOffset.width + 20 - offsetX) + 'px';
         break;
       case 'left-bottom-aligned':
         if (this._options.showStepNumbers) {
-          tooltipLayer.style.right = (targetOffset.width + 30) + 'px';
+          tooltipLayer.style.right = (targetOffset.width + 30 - offsetX) + 'px';
         } else {
-          tooltipLayer.style.right = (targetOffset.width + 20) + 'px';
+          tooltipLayer.style.right = (targetOffset.width + 20 - offsetX) + 'px';
         }
         arrowLayer.className = 'introjs-arrow right-bottom';
-        tooltipLayer.style.bottom = '0px';
+        tooltipLayer.style.bottom = (0 - offsetY) + 'px';
         break;
       case 'floating':
         arrowLayer.style.display = 'none';
@@ -678,31 +718,33 @@
         tooltipLayer.style.marginLeft = '-' + (tooltipWidth / 2)  + 'px';
         tooltipLayer.style.marginTop  = '-' + (tooltipHeight / 2) + 'px';
 
-        if (targetElement.className.indexOf('introjsFloatingElement') !== -1) {
-          // If there's no target element, position the step number next to the tooltip.
-          if (typeof helperNumberLayer !== 'undefined' && helperNumberLayer != null) {
-            helperNumberLayer.style.left = '-' + ((tooltipOffset.width / 2) + 18) + 'px';
-            helperNumberLayer.style.top  = '-' + ((tooltipOffset.height / 2) + 18) + 'px';
-          }
+        if (0) {
+            if (targetElement.className.indexOf('introjsFloatingElement') !== -1) {
+              // If there's no target element, position the step number next to the tooltip.
+              if (typeof helperNumberLayer !== 'undefined' && helperNumberLayer != null) {
+                helperNumberLayer.style.left = '-' + ((tooltipOffset.width / 2) + 18) + 'px';
+                helperNumberLayer.style.top  = '-' + ((tooltipOffset.height / 2) + 18) + 'px';
+              }
+            }
         }
         break;
       case 'bottom-right-aligned':
         arrowLayer.className      = 'introjs-arrow top-right';
-        tooltipLayer.style.right  = '0px';
-        tooltipLayer.style.bottom = '-' + (tooltipHeight + 10) + 'px';
+        tooltipLayer.style.right  = (0 - offsetX) + 'px';
+        tooltipLayer.style.bottom = '-' + (tooltipHeight + 10 + offsetY) + 'px';
         break;
       case 'bottom-middle-aligned':
         arrowLayer.className      = 'introjs-arrow top-middle';
-        tooltipLayer.style.left   = (targetOffset.width / 2 - tooltipWidth / 2) + 'px';
-        tooltipLayer.style.bottom = '-' + (tooltipHeight + 10) + 'px';
+        tooltipLayer.style.left   = (targetOffset.width / 2 - tooltipWidth / 2 + offsetX) + 'px';
+        tooltipLayer.style.bottom = '-' + (tooltipHeight + 10 + offsetY) + 'px';
         break;
       case 'bottom-left-aligned':
       // Bottom-left-aligned is the same as the default bottom
       case 'bottom':
       // Bottom going to follow the default behavior
       default:
-        tooltipLayer.style.bottom = '-' + (tooltipHeight + 10) + 'px';
-        tooltipLayer.style.left = (targetOffset.width / 2 - tooltipWidth / 2) + 'px';
+        tooltipLayer.style.bottom = '-' + (tooltipHeight + 10 + offsetY) + 'px';
+        tooltipLayer.style.left = (targetOffset.width / 2 - tooltipWidth / 2 + offsetX) + 'px';
 
         arrowLayer.className = 'introjs-arrow top';
         break;
@@ -940,6 +982,18 @@
   function _showElement(targetElement) {
     if (typeof this._introChangeCallback !== 'undefined') {
       this._introChangeCallback.call(this, targetElement.element);
+    }
+
+    if (this._currentStep > 0) {
+      var prevStepObj = this._introItems[this._currentStep - 1];
+      if (typeof (prevStepObj.onHide) === 'function') {
+         prevStepObj.onHide.call();
+      }
+    }
+
+    var currentStepObj = this._introItems[this._currentStep];
+    if (typeof (currentStepObj.onShow) === 'function') {
+      currentStepObj.onShow.call();
     }
 
     var self = this,
@@ -1354,20 +1408,7 @@
       tooltipReferenceLayer.css('top', offset - 5);
 
       if (0) {
-        var rect = targetElement.element.getBoundingClientRect(),
-            winHeight = _getWinSize().height,
-            winWidth = _getWinSize().width,
-            top = rect.top,
-            bottom = Math.min(rect.bottom - winHeight, rect.top - 130); // do not overscroll the top + 30px padding
-
-        // Scroll up
-        if ((top < 0 || targetElement.element.clientHeight > winHeight || this._options.forceScrollToTop === true || ( this._options.forceScrollToTopForSize !== false && winWidth < this._options.forceScrollToTopForSize )) && this._options.forceScrollToBottom === false) {
-          window.scrollBy(0, Math.round(top - 30)); // 30px padding from edge to look nice
-
-        // Scroll down
-        } else {
-          window.scrollBy(0, Math.round(bottom + 100)); // 70px + 30px padding from edge to look nice
-        }
+        $("html, body").animate({ scrollTop: $(targetElement.element).offset().top - 180 }, 700);
       }
     }
 
