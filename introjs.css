@@ -36,7 +36,7 @@ tr.introjs-showElement > th {
 .introjs-helperLayer {
   position: absolute;
   z-index: 9999998;
-  background: rgba(white, .3);
+  background: white;
   border: 1px solid #777;
   border: 1px solid rgba(0,0,0,.5);
   border-radius: 4px;
