@@ -76,6 +76,8 @@
       showProgress: true,
       /* Show step number? */
       showStepNumber: false,
+      /* Skip any steps which reference a non-existing DOM node; this option MAY be user-defined callback function */
+      skipMissingElements: true,
       /* Scroll to highlighted element? */
       scrollToElement: true,
       /* Force scroll to top */
@@ -157,26 +159,35 @@
           currentItem.element = document.querySelector(currentItem.element);
         }
 
-        //If the intro item is a plain object that has an innerHTML property, reassign that objects html as the intro value.
-        if (currentItem.intro && (typeof(currentItem.intro) === 'object' && currentItem.constructor === Object) && currentItem.intro.hasOwnProperty('innerHTML')) {
+        // If the intro item is a plain object that has an innerHTML property, reassign that objects html as the intro value.
+        if (currentItem.intro && typeof currentItem.intro.hasOwnProperty === 'function' && currentItem.intro.hasOwnProperty('innerHTML')) {
           currentItem.intro = currentItem.intro.innerHTML;
         }
 
-        if (0) {
-            // intro without element
-            if (!currentItem.element) {
-              var floatingElementQuery = document.querySelector('.introjsFloatingElement');
+        // intro without element
+        if (!currentItem.element) {
+          var check = this._options.skipMissingElements;
+          if (typeof check === 'function') {
+            // obtain the answer through userland callback:
+            check = check.call(this, {
+              step: i,
+              item: currentItem
+            });
+          }
+          // create/re-use a floating element when we're not allowed to skip the non-existing step/element:
+          if (!check) {
+            var floatingElementQuery = document.querySelector('.introjsFloatingElement');
 
-              if (!floatingElementQuery) {
-                floatingElementQuery = document.createElement('div');
-                floatingElementQuery.className = 'introjsFloatingElement';
+            if (!floatingElementQuery) {
+              floatingElementQuery = document.createElement('div');
+              floatingElementQuery.className = 'introjsFloatingElement';
 
-                document.body.appendChild(floatingElementQuery);
-              }
-
-              currentItem.element  = floatingElementQuery;
-              currentItem.position = 'floating';
+              document.body.appendChild(floatingElementQuery);
             }
+
+            currentItem.element  = floatingElementQuery;
+            currentItem.position = 'floating';
+          }
         }
         
         if (currentItem.element && window.getComputedStyle(currentItem.element).display !== 'none') {
@@ -502,9 +513,9 @@
       return;
     }
 
-    //call onHide function of active element
+    // call onHide function of active element
     var currentStepObj = this._introItems[this._currentStep];
-    if (typeof (currentStepObj.onHide) === 'function') {
+    if (typeof currentStepObj.onHide === 'function') {
        currentStepObj.onHide.call();
     }
 
@@ -537,12 +548,10 @@
       disableInteractionLayer.parentNode.removeChild(disableInteractionLayer);
     }
 
-    if (0) {
-        // remove intro floating element
-        var floatingElement = document.querySelector('.introjsFloatingElement');
-        if (floatingElement) {
-          floatingElement.parentNode.removeChild(floatingElement);
-        }
+    // remove intro floating element
+    var floatingElement = document.querySelector('.introjsFloatingElement');
+    if (floatingElement) {
+      floatingElement.parentNode.removeChild(floatingElement);
     }
     
     // remove `introjs-showElement` class from the element
@@ -614,28 +623,28 @@
     }
 
     // add overlay class if passed down
-    var currentStepObj = this._introItems[this._currentStep];
-    var overlayLayer = $('.introjs-overlay')[0];
-    if (typeof (currentStepObj.overlayClass) === 'string') {
+    currentStepObj = this._introItems[this._currentStep];
+    var overlayLayer = document.querySelector('.introjs-overlay');
+    if (typeof currentStepObj.overlayClass === 'string') {
       overlayLayer.className = 'introjs-overlay ' + currentStepObj.overlayClass;
     } else {
       overlayLayer.className = 'introjs-overlay';
     }
 
     // add first and last tooltip classes
-    var firstOrLastTooltipClass = "";
+    var firstOrLastTooltipClass = '';
     if (this._currentStep === 0) {
-      firstOrLastTooltipClass = "first-tooltip";
+      firstOrLastTooltipClass = 'first-tooltip';
     }
     if (this._currentStep === this._introItems.length - 1) {
-      firstOrLastTooltipClass = "last-tooltip";
+      firstOrLastTooltipClass = 'last-tooltip';
     }
 
     tooltipLayer.className = (tooltipCssClass + ' ' + firstOrLastTooltipClass).replace(/^\s+|\s+$/g, '');
 
     // add helper class if passed down
-    var helperLayer = $('.introjs-helperLayer')[0];
-    if (typeof (currentStepObj.helperClass) === 'string') {
+    var helperLayer = document.querySelector('.introjs-helperLayer');
+    if (typeof currentStepObj.helperClass === 'string') {
       helperLayer.className = 'introjs-helperLayer ' + currentStepObj.helperClass;
     } else {
       helperLayer.className = 'introjs-helperLayer';
@@ -654,8 +663,8 @@
     var windowSize = _getWinSize();
     var offsetX = 0;  
     var offsetY = 0;  
-    if (typeof (currentStepObj.offsetY) === 'number') offsetY = currentStepObj.offsetY;
-    if (typeof (currentStepObj.offsetX) === 'number') offsetX = currentStepObj.offsetX;
+    if (typeof currentStepObj.offsetY === 'number') offsetY = currentStepObj.offsetY;
+    if (typeof currentStepObj.offsetX === 'number') offsetX = currentStepObj.offsetX;
     switch (currentTooltipPosition) {
       case 'top':
       case 'top-left-aligned':
@@ -986,13 +995,13 @@
 
     if (this._currentStep > 0) {
       var prevStepObj = this._introItems[this._currentStep - 1];
-      if (typeof (prevStepObj.onHide) === 'function') {
+      if (typeof prevStepObj.onHide === 'function') {
          prevStepObj.onHide.call();
       }
     }
 
     var currentStepObj = this._introItems[this._currentStep];
-    if (typeof (currentStepObj.onShow) === 'function') {
+    if (typeof currentStepObj.onShow === 'function') {
       currentStepObj.onShow.call();
     }
 
@@ -1163,15 +1172,15 @@
       }
 
       var liStepsNumberActive = document.createElement('span');
-      liStepsNumberActive.className = "introjs-stepNumberActive";
+      liStepsNumberActive.className = 'introjs-stepNumberActive';
       liStepsNumberActive.innerHTML = _getActiveStepNumber.call(self, self._introItems, targetElement.step);
 
       var liStepsNumberSeparator = document.createElement('span');
-      liStepsNumberSeparator.className = "introjs-stepNumberSeparator";
-      liStepsNumberSeparator.innerHTML = this._options.stepNumberSeparator || "|";
+      liStepsNumberSeparator.className = 'introjs-stepNumberSeparator';
+      liStepsNumberSeparator.innerHTML = this._options.stepNumberSeparator || '|';
 
       var liStepsNumberAmount = document.createElement('span');
-      liStepsNumberAmount.className = "introjs-stepNumberAmount";
+      liStepsNumberAmount.className = 'introjs-stepNumberAmount';
       liStepsNumberAmount.innerHTML = _getNumberOfElements.call(self, self._introItems);
 
       stepsNumberLayer.appendChild(liStepsNumberActive);
@@ -1279,7 +1288,7 @@
       skipTooltipButton.innerHTML = currentItem.skipLabel;
 
       skipTooltipButton.onclick = function(e) {
-          _onSkipButtonHit.call(self, {
+        _onSkipButtonHit.call(self, {
           skipButtonEvent: e
         });
       };
@@ -1357,7 +1366,7 @@
 
       // Set focus on "next" button, so that hitting Enter always moves you onto the next step
       if (this._options.focusOnNextDoneButtons) {
-    nextTooltipButton.focus();
+        nextTooltipButton.focus();
       }
     }
 
@@ -1388,27 +1397,46 @@
       parentElm = parentElm.parentNode;
     }
 
-    var panel = $('.ui-tabs-panel:visible');
-    var helperLayer = $('.introjs-helperLayer');
-    var tooltipReferenceLayer = $('.introjs-tooltipReferenceLayer');
-    var target = $(targetElement.element);
+    var helperLayer = document.querySelector('.introjs-helperLayer');
+    var tooltipReferenceLayer = document.querySelector('.introjs-tooltipReferenceLayer');
 
     if (targetElement.element.tagName.toLowerCase() === 'body') {
       window.scrollTo(0, 0); // scroll to top when highlighting the whole page
-    } else if ((!_elementInViewport(targetElement.element) || panel.scrollTop() > 0) && this._options.scrollToElement) {
-      var scrollTop = target.offset().top + panel.scrollTop(); // get the scrollbar position
-      var offset = 200; // 150px padding from edge to look nice
-      panel.scrollTop(scrollTop - offset);
-      // Check when scrollbar is at the bottom of the panel
-      if (target.offset().top > offset) { 
-        offset = target.offset().top;
+    } else if (!_elementInViewport(targetElement.element) && this._options.scrollToElement) {
+      var rect = targetElement.element.getBoundingClientRect(),
+        winHeight = _getWinSize().height,
+        top = rect.top,
+        bottom = rect.bottom - winHeight,
+        // win = targetElement.element.ownerDocument.defaultView || targetElement.element.ownerDocument.parentWindow,
+        win = window,
+        originalScrollTop = (win.pageYOffset !== undefined ? win.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop) || 0,
+        originalScrollLeft = (win.pageXOffset !== undefined ? win.pageXOffset : (document.documentElement || document.body.parentNode || document.body).scrollLeft) || 0;
+
+      if (top < 0 || rect.bottom - rect.top > winHeight) {
+        // Scroll up
+        window.scrollBy(originalScrollLeft, top - 30); // 30px padding from edge to look nice
+      } else {
+        // Scroll down
+        window.scrollBy(originalScrollLeft, bottom + 100); // 70px + 30px padding from edge to look nice
       }
-      // Reposition the intro to fit in page
-      helperLayer.css('top', offset - 5);        
-      tooltipReferenceLayer.css('top', offset - 5);
 
       if (0) {
-        $("html, body").animate({ scrollTop: $(targetElement.element).offset().top - 180 }, 700);
+        var target = $(targetElement.element);
+        var panel = document.querySelector('.ui-tabs-panel');
+        var scrollTop = target.offset().top + panel.scrollTop(); // get the scrollbar position
+        var offset = 200; // 150px padding from edge to look nice
+        panel.scrollTop(scrollTop - offset);
+        // Check when scrollbar is at the bottom of the panel
+        if (target.offset().top > offset) { 
+          offset = target.offset().top;
+        }
+        // Reposition the intro to fit in page
+        helperLayer.style.top = (offset - 5) + 'px';        
+        tooltipReferenceLayer.style.top = (offset - 5) + 'px';
+      }
+      
+      if (0) {
+        $('html, body').animate({ scrollTop: $(targetElement.element).offset().top - 180 }, 700);
       }
     }
 
@@ -1482,21 +1510,29 @@
 
   /**
    * Add overlay layer to the page
-   * http://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport
+   * http://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
    *
    * @api private
    * @method _elementInViewport
    * @param {Object} el
    */
   function _elementInViewport(el) {
-    var rect = el.getBoundingClientRect();
-    var winsize = _getWinSize();
+    var rect     = el.getBoundingClientRect(),
+        winsize  = _getWinSize(),
+        efp      = function (x, y) { 
+          return document.elementFromPoint(x, y);
+        };     
 
+    // Return false if it's not in the viewport
+    if (rect.right < 0 || rect.bottom < 0 || rect.left > winsize.width || rect.top > winsize.height)
+      return false;
+
+    // Return true if any of its four corners are visible
     return (
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      (rect.bottom + 80) <= winsize.height && // add 80 to get the text right
-      rect.right <= winsize.width
+          el.contains(efp(rect.left,  rect.top))
+      ||  el.contains(efp(rect.right, rect.top))
+      ||  el.contains(efp(rect.right, rect.bottom))
+      ||  el.contains(efp(rect.left,  rect.bottom))
     );
   }
 
