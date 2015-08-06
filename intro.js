@@ -44,13 +44,14 @@
     this._textData = textData || {};
 
     this._currentStep = 0;
+    this._previousStep = false;       // this one tracks the previous step last shown; to aid 'pinning' of this value, it is offset by 10 (which is a number larger than 1 or 2 as we MAY see step=-1 under rare circumstances).
     this._direction = null;
     this._introAfterChangeCallback = null;
     this._introBeforeChangeCallback = null;
     this._introChangeCallback = null;
     this._introCompleteCallback = null;
     this._introExitCallback = null;
-    this._introItems = [];
+    this._introItems = null;
     this._lastShowElementTimer = null;
     this._onKeyDown = null;
     this._onResize = null;
@@ -302,6 +303,9 @@
     // add overlay layer to the page
     if (_addOverlayLayer.call(self, (self._options.maskTarget || targetElm))) {
       // then, start the show
+      // 
+      // position us so that #_nextStep() will get us there:
+      this._currentStep = -1;
       _nextStep.call(self);
 
       self._onKeyDown = function(e) {
@@ -412,11 +416,11 @@
    * @method _goToStep
    */
   function _goToStep(step) {
+    // remember the current step if we haven't already:
+    this._previousStep = this._previousStep || (this._currentStep + 10);
     // because steps starts with zero
-    this._currentStep = step - 2;
-    if (typeof this._introItems !== 'undefined') {
-      _nextStep.call(this);
-    }
+    this._currentStep = Math.min(Math.max(-1, step - 2), this._introItems.length - 1);
+    _nextStep.call(this);
   }
 
   /**
@@ -426,15 +430,15 @@
    * @method _goToStepNumber
    */
   function _goToStepNumber(step) {
-    if (typeof this._introItems !== 'undefined') {
-      for (var i = 0, len = this._introItems.length; i < len; i++) {
-        var item = this._introItems[i];
-        if (item.step === step) {
-          // position us so that #_nextStep() will get us there:
-          this._currentStep = i - 1;
-          _nextStep.call(this);
-          break;
-        }
+    for (var i = 0, len = this._introItems.length; i < len; i++) {
+      var item = this._introItems[i];
+      if (item.step === step) {
+        // remember the current step if we haven't already:
+        this._previousStep = this._previousStep || (this._currentStep + 10);
+        // position us so that #_nextStep() will get us there:
+        this._currentStep = i - 1;
+        _nextStep.call(this);
+        break;
       }
     }
   }
@@ -450,11 +454,10 @@
 
     this._direction = 'forward';
 
-    if (typeof this._currentStep === 'undefined') {
-      this._currentStep = 0;
-    } else {
-      ++this._currentStep;
-    }
+    // remember the current step if we haven't already:
+    this._previousStep = this._previousStep || (this._currentStep + 10);
+
+    ++this._currentStep;
 
     while ((this._introItems.length > this._currentStep) && this._introItems[this._currentStep].skipOnMobile === true && this._options.mobileTresholdWidth !== false && winWidth < this._options.mobileTresholdWidth) {
       this._currentStep++;
@@ -488,6 +491,9 @@
    */
   function _previousStep() {
     var winWidth = _getWinSize().width;
+
+    // remember the current step if we haven't already:
+    this._previousStep = this._previousStep || (this._currentStep + 10);
 
     this._direction = 'backward';
 
@@ -531,77 +537,76 @@
     // remove overlay layer from the page
     var overlayLayer = (this._options.maskTarget || targetElement).querySelector('.introjs-overlay');
 
-    // return if intro already completed or skipped
-    if (!overlayLayer) {
-      return;
-    }
-
-    // call onHide function of active element
-    var currentStepObj = this._introItems[this._currentStep];
-    if (typeof currentStepObj.onHide === 'function') {
-      currentStepObj.onHide.call();
-    }
-
-    if (this._options.overlayOpacity === 0) {
-      overlayLayer.parentNode.removeChild(overlayLayer);
-    } else {
-      // for fade-out animation
-      overlayLayer.style.opacity = 0;
-      setTimeout(function () {
-        if (overlayLayer.parentNode) {
-          overlayLayer.parentNode.removeChild(overlayLayer);
-        }
-      }, 500);
-    }
-
-    // remove all helper layers
-    var helperLayer = targetElement.querySelector('.introjs-helperLayer');
-    if (helperLayer) {
-      helperLayer.parentNode.removeChild(helperLayer);
-    }
-
-    var referenceLayer = targetElement.querySelector('.introjs-tooltipReferenceLayer');
-    if (referenceLayer) {
-      referenceLayer.parentNode.removeChild(referenceLayer);
-    }
-
-    // remove disableInteractionLayer
-    var disableInteractionLayer = targetElement.querySelector('.introjs-disableInteraction');
-    if (disableInteractionLayer) {
-      disableInteractionLayer.parentNode.removeChild(disableInteractionLayer);
-    }
-
-    // remove intro floating element
-    var floatingElement = document.querySelector('.introjsFloatingElement');
-    if (floatingElement) {
-      floatingElement.parentNode.removeChild(floatingElement);
-    }
-    
-    // remove `introjs-showElement` class from the element
-    var showElement = document.querySelector('.introjs-showElement');
-    if (showElement) {
-      showElement.className = showElement.className.replace(/introjs-[a-zA-Z]+/g, '').replace(/^\s+|\s+$/g, ''); // This is a manual trim.
-    }
-
-    // remove `introjs-fixParent` class from the elements
-    var fixParents = document.querySelectorAll('.introjs-fixParent');
-    if (fixParents && fixParents.length > 0) {
-      for (var i = fixParents.length - 1; i >= 0; i--) {
-        fixParents[i].className = fixParents[i].className.replace(/introjs-fixParent/g, '').replace(/^\s+|\s+$/g, '');
+    // return if intro already completed or skipped; otherwise clean up after the intro
+    if (overlayLayer) {
+      // call onHide function of active element
+      var currentStepObj = this._introItems[this._currentStep];
+      if (currentStepObj && typeof currentStepObj.onHide === 'function') {
+        currentStepObj.onHide.call();
       }
-    }
 
-    // clean listeners
-    if (window.removeEventListener) {
-      window.removeEventListener('keydown', this._onKeyDown, true);
-      window.removeEventListener('resize', this._onResize, true);
-    } else if (document.detachEvent) { //IE
-      document.detachEvent('onkeydown', this._onKeyDown);
-      document.attachEvent('onresize', this._onResize);
+      if (this._options.overlayOpacity === 0) {
+        overlayLayer.parentNode.removeChild(overlayLayer);
+      } else {
+        // for fade-out animation
+        overlayLayer.style.opacity = 0;
+        setTimeout(function () {
+          if (overlayLayer.parentNode) {
+            overlayLayer.parentNode.removeChild(overlayLayer);
+          }
+        }, 500);
+      }
+
+      // remove all helper layers
+      var helperLayer = targetElement.querySelector('.introjs-helperLayer');
+      if (helperLayer) {
+        helperLayer.parentNode.removeChild(helperLayer);
+      }
+
+      var referenceLayer = targetElement.querySelector('.introjs-tooltipReferenceLayer');
+      if (referenceLayer) {
+        referenceLayer.parentNode.removeChild(referenceLayer);
+      }
+
+      // remove disableInteractionLayer
+      var disableInteractionLayer = targetElement.querySelector('.introjs-disableInteraction');
+      if (disableInteractionLayer) {
+        disableInteractionLayer.parentNode.removeChild(disableInteractionLayer);
+      }
+
+      // remove intro floating element
+      var floatingElement = document.querySelector('.introjsFloatingElement');
+      if (floatingElement) {
+        floatingElement.parentNode.removeChild(floatingElement);
+      }
+      
+      // remove `introjs-showElement` class from the element
+      var showElement = document.querySelector('.introjs-showElement');
+      if (showElement) {
+        showElement.className = showElement.className.replace(/introjs-[a-zA-Z]+/g, '').replace(/^\s+|\s+$/g, ''); // This is a manual trim.
+      }
+
+      // remove `introjs-fixParent` class from the elements
+      var fixParents = document.querySelectorAll('.introjs-fixParent');
+      if (fixParents && fixParents.length > 0) {
+        for (var i = fixParents.length - 1; i >= 0; i--) {
+          fixParents[i].className = fixParents[i].className.replace(/introjs-fixParent/g, '').replace(/^\s+|\s+$/g, '');
+        }
+      }
+
+      // clean listeners
+      if (window.removeEventListener) {
+        window.removeEventListener('keydown', this._onKeyDown, true);
+        window.removeEventListener('resize', this._onResize, true);
+      } else if (document.detachEvent) { //IE
+        document.detachEvent('onkeydown', this._onKeyDown);
+        document.attachEvent('onresize', this._onResize);
+      }
     }
 
     // set the step to zero
     this._currentStep = 0;
+    this._previousStep = false;
   }
 
   /**
@@ -1016,11 +1021,12 @@
       this._introChangeCallback.call(this, targetElement.element);
     }
 
-    if (this._currentStep > 0) {
-      var prevStepObj = this._introItems[this._currentStep - 1];
-      if (typeof prevStepObj.onHide === 'function') {
+    if (this._previousStep) {
+      var prevStepObj = this._introItems[this._previousStep - 10];
+      if (prevStepObj && typeof prevStepObj.onHide === 'function') {
          prevStepObj.onHide.call();
       }
+      this._previousStep = false;
     }
 
     var currentStepObj = this._introItems[this._currentStep];
@@ -1653,8 +1659,8 @@
    */
   function _getProgress() {
     // Steps are 0 indexed
-    var currentStep = parseInt((this._currentStep + 1), 10);
-    return ((currentStep / this._introItems.length) * 100);
+    var currentStep = this._currentStep + 1;
+    return (currentStep / this._introItems.length) * 100;
   }
 
   /**
