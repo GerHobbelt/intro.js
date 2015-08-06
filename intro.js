@@ -373,10 +373,10 @@
     var temp = {};
     for (var key in object) {
       // Prevent runaway recursion while cloning: keep jQuery references as-is:
-      if (object[key] instanceof jQuery) {
-	    temp[key] = object[key];
+      if (typeof jQuery !== 'undefined' && object[key] instanceof jQuery) {
+	      temp[key] = object[key];
       } else {
-	    temp[key] = _cloneObject(object[key]);
+	      temp[key] = _cloneObject(object[key]);
       }
     }
     return temp;
@@ -516,7 +516,7 @@
     // call onHide function of active element
     var currentStepObj = this._introItems[this._currentStep];
     if (typeof currentStepObj.onHide === 'function') {
-       currentStepObj.onHide.call();
+      currentStepObj.onHide.call();
     }
 
     if (this._options.overlayOpacity === 0) {
@@ -1457,7 +1457,7 @@
     }
 
     _exitIntro.call(this, this._targetElement);
-  };
+  }
 
   /**
    * Get an element CSS property on the page
