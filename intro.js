@@ -43,6 +43,18 @@
 
     this._textData = textData || {};
 
+    this._currentStep = 0;
+    this._direction = null;
+    this._introAfterChangeCallback = null;
+    this._introBeforeChangeCallback = null;
+    this._introChangeCallback = null;
+    this._introCompleteCallback = null;
+    this._introExitCallback = null;
+    this._introItems = [];
+    this._lastShowElementTimer = null;
+    this._onKeyDown = null;
+    this._onResize = null;
+
     this._options = {
       /* Next button label in tooltip box */
       nextLabel: 'Next &rarr;',
@@ -86,7 +98,7 @@
       forceScrollToTopForSize: false,
       /* Force scroll to bottom */
       forceScrollToBottom: false,
-      /* Set mobile threshold */
+      /* Set mobile threshold; set to `false` to disable this feature */
       mobileTresholdWidth: false,
       /* Set the overlay opacity */
       overlayOpacity: 0.8,
@@ -105,7 +117,11 @@
       /* css class that indicates element is hidden, and so will be ignored by intro */
       hiddenClass: null,
       /* previousStep and prevButton are disabled at these checkpoints (checkpoint = step number)? */
-      checkpoints: []
+      checkpoints: [],
+      /* the steps of the intro sequence */
+      steps: [],
+      /* separator between active step number and the total number of steps in the displayed progress state HTML */
+      stepNumberSeparator: '|',
     };
   }
 
@@ -265,7 +281,14 @@
         intro: _getIntroText.call(self, currentElement),
         tooltipClass: currentElement.getAttribute(attrNames.tooltip),
         highlightClass: currentElement.getAttribute(attrNames.highlight),
+        overlayClass: null,
+        helperClass: null,
+        onHide: null,
+        onShow: null,
         position: currentElement.getAttribute(attrNames.position) || this._options.tooltipPosition,
+        offsetX: 0,
+        offsetY: 0,
+        skipOnMobile: false,
         prevLabel: currentElement.getAttribute(attrNames.prevLabel) || this._options.prevLabel,
         nextLabel: currentElement.getAttribute(attrNames.nextLabel) || this._options.nextLabel,
         skipLabel: currentElement.getAttribute(attrNames.skipLabel) || (i + 1 < elmsLength ? this._options.skipLabel : this._options.doneLabel)
@@ -335,7 +358,7 @@
         oldStepsNumberActive.innerHTML = _getActiveStepNumber.call(self, self._introItems, self._currentStep + 1);
         oldStepsNumberAmmount.innerHTML = _getNumberOfElements.call(self, self._introItems);
 
-        if (self._introItems[self._currentStep].skipOnMobile === true && winWidth < self._options.mobileTresholdWidth) {
+        if (self._introItems[self._currentStep].skipOnMobile === true && this._options.mobileTresholdWidth !== false && winWidth < self._options.mobileTresholdWidth) {
           _nextStep.call(self);
         }
 
@@ -450,7 +473,7 @@
     }
 
     var nextStep = this._introItems[this._currentStep];
-    if (typeof this._introBeforeChangeCallback !== 'undefined') {
+    if (typeof this._introBeforeChangeCallback === 'function') {
       this._introBeforeChangeCallback.call(this, nextStep.element);
     }
 
@@ -490,7 +513,7 @@
     }
 
     var nextStep = this._introItems[this._currentStep];
-    if (typeof this._introBeforeChangeCallback !== 'undefined') {
+    if (typeof this._introBeforeChangeCallback === 'function') {
       this._introBeforeChangeCallback.call(this, nextStep.element);
     }
 
@@ -951,7 +974,7 @@
       i = 0;
 
     for (; i < stepNumber - 1; i++) {
-      if ( introItems[i].skipOnMobile === true && winWidth < this._options.mobileTresholdWidth ) {
+      if ( introItems[i].skipOnMobile === true && this._options.mobileTresholdWidth !== false && winWidth < this._options.mobileTresholdWidth ) {
         stepNumber--;
       }
     }
@@ -973,7 +996,7 @@
       i = 0;
 
     for (; i < introItemsLength; i++) {
-      if ( introItems[i].skipOnMobile === true && winWidth < this._options.mobileTresholdWidth ) {
+      if ( introItems[i].skipOnMobile === true && this._options.mobileTresholdWidth !== false && winWidth < this._options.mobileTresholdWidth ) {
         counter--;
       }
     }
@@ -989,7 +1012,7 @@
    * @param {Object} targetElement
    */
   function _showElement(targetElement) {
-    if (typeof this._introChangeCallback !== 'undefined') {
+    if (typeof this._introChangeCallback === 'function') {
       this._introChangeCallback.call(this, targetElement.element);
     }
 
@@ -1440,7 +1463,7 @@
       }
     }
 
-    if (typeof this._introAfterChangeCallback !== 'undefined') {
+    if (typeof this._introAfterChangeCallback === 'function') {
       this._introAfterChangeCallback.call(this, targetElement.element);
     }
   }
@@ -1471,9 +1494,9 @@
    */
   function _getPropValue (element, propName) {
     var propValue = '';
-    if (element.currentStyle) { //IE
+    if (element.currentStyle) { // IE
       propValue = element.currentStyle[propName];
-    } else if (document.defaultView && document.defaultView.getComputedStyle) { //Others
+    } else if (document.defaultView && document.defaultView.getComputedStyle) { // Others
       propValue = document.defaultView.getComputedStyle(element, null).getPropertyValue(propName);
     }
 
@@ -1741,7 +1764,7 @@
       return this;
     },
     onbeforechange: function(providedCallback) {
-      if (typeof providedCallback === 'function') {
+      if (typeof providedCallback === 'function' || !providedCallback) {
         this._introBeforeChangeCallback = providedCallback;
       } else {
         throw new Error('Provided callback for onbeforechange was not a function');
@@ -1749,7 +1772,7 @@
       return this;
     },
     onchange: function(providedCallback) {
-      if (typeof providedCallback === 'function') {
+      if (typeof providedCallback === 'function' || !providedCallback) {
         this._introChangeCallback = providedCallback;
       } else {
         throw new Error('Provided callback for onchange was not a function.');
@@ -1757,7 +1780,7 @@
       return this;
     },
     onafterchange: function(providedCallback) {
-      if (typeof providedCallback === 'function') {
+      if (typeof providedCallback === 'function' || !providedCallback) {
         this._introAfterChangeCallback = providedCallback;
       } else {
         throw new Error('Provided callback for onafterchange was not a function');
@@ -1765,7 +1788,7 @@
       return this;
     },
     oncomplete: function(providedCallback) {
-      if (typeof providedCallback === 'function') {
+      if (typeof providedCallback === 'function' || !providedCallback) {
         this._introCompleteCallback = providedCallback;
       } else {
         throw new Error('Provided callback for oncomplete was not a function.');
@@ -1773,7 +1796,7 @@
       return this;
     },
     onexit: function(providedCallback) {
-      if (typeof providedCallback === 'function') {
+      if (typeof providedCallback === 'function' || !providedCallback) {
         this._introExitCallback = providedCallback;
       } else {
         throw new Error('Provided callback for onexit was not a function.');
