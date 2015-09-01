@@ -43,7 +43,7 @@
 
     this._textData = textData || {};
 
-    this._currentStep = 0;
+    this._currentStep = -1;
     this._previousStep = false;       // this one tracks the previous step last shown; to aid 'pinning' of this value, it is offset by 10 (which is a number larger than 1 or 2 as we MAY see step=-1 under rare circumstances).
     this._direction = null;
     this._introAfterChangeCallback = null;
@@ -605,7 +605,7 @@
     }
 
     // set the step to zero
-    this._currentStep = 0;
+    this._currentStep = -1;
     this._previousStep = false;
   }
 
