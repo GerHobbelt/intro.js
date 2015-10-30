@@ -1,5 +1,5 @@
 /**
- * Intro.js v1.0.0
+ * Intro.js v1.1.1
  * https://github.com/usablica/intro.js
  * MIT licensed
  *
@@ -19,7 +19,7 @@
   }
 } (this, function (exports) {
   // Default config/variables
-  var VERSION = '1.0.0';
+  var VERSION = '1.1.1';
   var attrNames = {
         step: 'data-intro-step',
         text: 'data-intro-text',
@@ -614,9 +614,10 @@
    *
    * @api private
    * @method _placeTooltip
-   * @param {Object} targetElement
-   * @param {Object} tooltipLayer
-   * @param {Object} arrowLayer
+   * @param {HTMLElement} targetElement
+   * @param {HTMLElement} tooltipLayer
+   * @param {HTMLElement} arrowLayer
+   * @param {HTMLElement} helperNumberLayer
    */
   function _placeTooltip(targetElement, tooltipLayer, arrowLayer, helperNumberLayer) {
     var tooltipCssClass = '',
@@ -700,11 +701,13 @@
         tooltipLayer.style.top = '-' + (tooltipHeight + 10 - offsetY) + 'px';
         arrowLayer.className = 'introjs-arrow bottom';
         break;
+
       case 'top-right-aligned':
         tooltipLayer.style.right = (0 - offsetX) + 'px';
         tooltipLayer.style.top = '-' + (tooltipHeight + 10 - offsetY) + 'px';
         arrowLayer.className = 'introjs-arrow bottom-right';
         break;
+
       case 'right':
       case 'right-top-aligned':
         tooltipLayer.style.left = (targetOffset.width + 20 + offsetX) + 'px';
@@ -716,11 +719,13 @@
           tooltipLayer.style.top = '-' + (tooltipHeight - targetOffset.height - 20 - offsetY) + 'px';
         }
         break;
+
       case 'right-bottom-aligned':
         tooltipLayer.style.left = (targetOffset.width + 20 + offsetX) + 'px';
         tooltipLayer.style.bottom = (0 - offsetX) + 'px';
         arrowLayer.className = 'introjs-arrow left-bottom';
         break;
+
       case 'left':
       case 'left-top-aligned':
         if (this._options.showStepNumbers) {
@@ -737,6 +742,7 @@
         }
         tooltipLayer.style.right = (targetOffset.width + 20 - offsetX) + 'px';
         break;
+
       case 'left-bottom-aligned':
         if (this._options.showStepNumbers) {
           tooltipLayer.style.right = (targetOffset.width + 30 - offsetX) + 'px';
@@ -746,6 +752,7 @@
         arrowLayer.className = 'introjs-arrow right-bottom';
         tooltipLayer.style.bottom = (0 - offsetY) + 'px';
         break;
+
       case 'floating':
         arrowLayer.style.display = 'none';
 
@@ -765,16 +772,19 @@
             }
         }
         break;
+
       case 'bottom-right-aligned':
         arrowLayer.className      = 'introjs-arrow top-right';
         tooltipLayer.style.right  = (0 - offsetX) + 'px';
         tooltipLayer.style.bottom = '-' + (tooltipHeight + 10 + offsetY) + 'px';
         break;
+
       case 'bottom-middle-aligned':
         arrowLayer.className      = 'introjs-arrow top-middle';
         tooltipLayer.style.left   = (targetOffset.width / 2 - tooltipWidth / 2 + offsetX) + 'px';
         tooltipLayer.style.bottom = '-' + (tooltipHeight + 10 + offsetY) + 'px';
         break;
+
       case 'bottom-left-aligned':
       // Bottom-left-aligned is the same as the default bottom
       case 'bottom':
@@ -799,7 +809,7 @@
    */
   function _determineAutoPosition(targetElement, tooltipLayer, desiredTooltipPosition) {
     // Take a clone of position precedence. These will be the available
-    var possiblePositions = this._options.positionPrecedence.slice()
+    var possiblePositions = this._options.positionPrecedence.slice();
 
     var windowSize = _getWinSize();
     var targetOffset = _getOffset(targetElement);
@@ -1419,7 +1429,7 @@
       var zIndex = _getPropValue(parentElm, 'z-index');
       var opacity = parseFloat(_getPropValue(parentElm, 'opacity'));
       var transform = _getPropValue(parentElm, 'transform') || _getPropValue(parentElm, '-webkit-transform') || _getPropValue(parentElm, '-moz-transform') || _getPropValue(parentElm, '-ms-transform') || _getPropValue(parentElm, '-o-transform');
-      if (/[0-9]+/.test(zIndex) || opacity < 1 || transform !== 'none') {
+      if (/[0-9]+/.test(zIndex) || opacity < 1 || (transform !== 'none' && transform !== undefined)) {
         parentElm.className += ' introjs-fixParent';
       }
 

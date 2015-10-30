@@ -3,11 +3,6 @@
 > Better introductions for websites and features with a step-by-step guide for your projects.
 
 
-## Latest news
-
-Sorry for this long delay on releasing the new version of IntroJS. We are working to merge pull requests and address almost all issues. IntroJS is **still alive** and we will release a new version soon.
-
-
 ## Where to get
 
 You can obtain your local copy of Intro.js from:
@@ -465,6 +460,17 @@ Want to learn faster and easier? Here we have **Instant IntroJs**, Packt Publish
 
 
 ## Release History
+
+ * **v1.1.1** - 2015-09-05
+   - Fix versioning issue
+
+ * **v1.1.0** - 2015-09-01
+   - Fix no interaction bug
+   - Fix recursion bug with jQuery
+   - Call `onexit` on pressing Esc or clicking on the overlay layer
+   - Fix helper layer positioning issue when the content changes
+   - Fix transform is 'undefined' in IE 8
+   - Fix coding style issues
 
  * **v1.0.0** - 2014-10-17
    - Auto-positioning feature for tooltip box
