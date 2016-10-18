@@ -198,10 +198,6 @@
       self._onKeyDown = function(e) {
         if (e.keyCode === 27 && self._options.exitOnEsc == true) {
           //escape key pressed, exit the intro
-          //check if exit callback is defined
-          if (self._introExitCallback != undefined) {
-            self._introExitCallback.call(self);
-          }
           _exitIntro.call(self, targetElm);
         } else if(e.keyCode === 37) {
           //left arrow
@@ -219,10 +215,6 @@
             //user hit enter while focusing on skip button
             if (self._introItems.length - 1 == self._currentStep && typeof (self._introCompleteCallback) === 'function') {
                 self._introCompleteCallback.call(self);
-            }
-            //check if any callback is defined
-            if (self._introExitCallback != undefined) {
-              self._introExitCallback.call(self);
             }
             _exitIntro.call(self, targetElm);
           } else {
@@ -418,6 +410,11 @@
 
     //set the step to zero
     this._currentStep = undefined;
+
+    //check if exit callback is defined
+    if (this._introExitCallback != undefined) {
+      this._introExitCallback.call(this);
+    }
   }
 
   /**
@@ -962,11 +959,7 @@
         if (self._introItems.length - 1 == self._currentStep && typeof (self._introCompleteCallback) === 'function') {
           self._introCompleteCallback.call(self);
         }
-
-        if (self._introItems.length - 1 != self._currentStep && typeof (self._introExitCallback) === 'function') {
-          self._introExitCallback.call(self);
-        }
-
+        self._introSkipCallback.call(self);
         _exitIntro.call(self, self._targetElement);
       };
 
@@ -1197,11 +1190,6 @@
 
     overlayLayer.onclick = function() {
       if (self._options.exitOnOverlayClick == true) {
-
-        //check if any callback is defined
-        if (self._introExitCallback != undefined) {
-          self._introExitCallback.call(self);
-        }
         _exitIntro.call(self, targetElm);
       }
     };
@@ -1705,6 +1693,14 @@
         this._introExitCallback = providedCallback;
       } else {
         throw new Error('Provided callback for onexit was not a function.');
+      }
+      return this;
+    },
+    onskip: function(providedCallback) {
+      if (typeof (providedCallback) === 'function') {
+        this._introSkipCallback = providedCallback;
+      } else {
+        throw new Error('Provided callback for onskip was not a function.');
       }
       return this;
     },
