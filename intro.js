@@ -68,7 +68,7 @@
       /* Disable an interaction with element? */
       disableInteraction: false,
       /* Default hint position */
-      hintPosition: 'top',
+      hintPosition: 'top-middle',
       /* Hint button label */
       hintButtonLabel: 'Got it',
     };
@@ -1217,6 +1217,8 @@
           //grab the element with given selector from the page
           currentItem.element = document.querySelector(currentItem.element);
         }
+
+        currentItem.hintPosition = currentItem.hintPosition || 'top-middle';
 
         if (currentItem.element != null) {
           this._introItems.push(currentItem);
