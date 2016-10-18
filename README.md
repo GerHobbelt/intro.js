@@ -2,6 +2,21 @@
 
 > Better introductions for websites and features with a step-by-step guide for your projects.
 
+>
+> # LICENSE WARNING
+>
+> IntroJS changed from MIT to AGPL after 2016-03-03!
+>
+> This fork will not do so and thus will *not* include any work under the AGPL license umbrella, hence any (merged for original or others) work
+> after that date will be strictly scrutinized to ensure not a single bit of work done in the original repo after that license change will make it in here to ensure that we will remain MIT licensed.
+>
+> The exact transition edge commits are tagged, but here they are for reference:
+>
+> - gh-pages branch: commit SHA-1: d999f5a02e3089c5694dcd7e29f917dd8af8da76 :: add licenses + stripe checkout (tag: gh-pages-license-intent-added)
+> - master branch: commit SHA-1: 38061be1bc29c269841cc38db96cdd301249e7dc :: Update README.md (tag: last-commit-before-change-to-AGPL-license -- this is the last commit in the master branch before the AGPL license *evidently is in effect* -- the commit listed above introduces price plans but does *not* mention a license change yet!)
+> - master branch: commit SHA-1: 199c7486a7ce19fa39c752a1632f1065e78fa0fc :: Update license.md (tag: license-changed-to-AGPL) -- this is where the actual license is changed, but the previous listed commit is just before commit SHA-1: 66e5365342aac60ddf4f08fad900018ed343e1a9 which mentions 'commercial use', so it *may* be argued that the price plans and that commit are *indicators* for the later evidential change to AGPL in commit  SHA-1: 199c7486a7ce19fa39c752a1632f1065e78fa0fc. We're better safe than sorry so we're going to stay *before* the *indicator commits* and not merge/cherrypick/otherwise re-use any work done after those.
+>
+
 
 ## Where to get
 
