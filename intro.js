@@ -1001,8 +1001,14 @@
       _disableInteraction.call(self);
     }
 
-    prevTooltipButton.removeAttribute('tabIndex');
-    nextTooltipButton.removeAttribute('tabIndex');
+    if (prevTooltipButton) 
+      prevTooltipButton.removeAttribute('tabIndex');
+    else 
+      prevTooltipButton = {};
+    if (nextTooltipButton) 
+      nextTooltipButton.removeAttribute('tabIndex');
+    else 
+      nextTooltipButton = {};
 
     if (this._currentStep == 0 && this._introItems.length > 1) {
       prevTooltipButton.className = 'introjs-button introjs-prevbutton introjs-disabled';
@@ -1025,7 +1031,8 @@
     skipTooltipButton.setAttribute('role', 'button');
 
     //Set focus on "next" button, so that hitting Enter always moves you onto the next step
-    nextTooltipButton.focus();
+    if (nextTooltipButton.focus) 
+      nextTooltipButton.focus();
 
     //add target element position style
     targetElement.element.className += ' introjs-showElement';
